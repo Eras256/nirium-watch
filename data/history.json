@@ -1,0 +1,80 @@
+[
+  {
+    "ts": "2026-10-25T22:30:05.813Z",
+    "endpoint": "https://nirium-agent.fly.dev/api/v1/premium/market",
+    "facilitator": "OpenZeppelin (via Nirium testnet agent)",
+    "http402": true,
+    "paid": true,
+    "tx": "56fb094b21deae1cf510a0a2a71eddcbc93f5e3b75c299645c35426f7f705d88",
+    "verified": true,
+    "state": "ok",
+    "latencyMs": 9978,
+    "error": null,
+    "cid": "QmauwcZHMfydCuxMACXz12Gzgq1D9kxN1ymPiSPrM48PdQ"
+  },
+  {
+    "ts": "2026-10-25T22:30:16.759Z",
+    "endpoint": "https://nirium-agent.fly.dev/api/v1/premium/signals",
+    "facilitator": "OpenZeppelin (via Nirium testnet agent)",
+    "http402": true,
+    "paid": true,
+    "tx": "0f77f817db056a39ad500cf0f81667c20b01e6c928c8c2216466d3c474092f66",
+    "verified": true,
+    "state": "ok",
+    "latencyMs": 8298,
+    "error": null,
+    "cid": "QmakossbhjQMGVJNSGSshFEsTu8Vc14Un1VwNGnwkWj9tm"
+  },
+  {
+    "ts": "2026-10-25T22:30:26.186Z",
+    "endpoint": "https://demo.rail402.dev/weather?city=Istanbul",
+    "facilitator": "Rail402 (fees sponsored)",
+    "http402": true,
+    "paid": true,
+    "tx": "017689cc2df76a1d9ffd35cd98ac851dac31fe1b35c060cf999637713e2d63c5",
+    "verified": true,
+    "state": "ok",
+    "latencyMs": 12165,
+    "error": null,
+    "cid": "QmWkQzXc2xPL6X4jwNA2YzTW5hHvHZ8QgydQjYBRkMiV5u"
+  },
+  {
+    "ts": "2026-10-25T22:30:39.243Z",
+    "endpoint": "https://demo.rail402.dev/weather",
+    "facilitator": "rail402 (discovered)",
+    "http402": true,
+    "paid": true,
+    "tx": "c7add8c93609c7e76354067994679d18f0989efd09037f00d3b303120cfb999c",
+    "verified": true,
+    "state": "ok",
+    "latencyMs": 3271,
+    "error": null,
+    "cid": "QmPZPUVGDHxdT9grf1uq6K6znzSeNFvikqnEBT52riNsjN"
+  },
+  {
+    "ts": "2026-10-25T22:30:43.239Z",
+    "endpoint": "https://demo.rail402.dev/users/:id",
+    "facilitator": "rail402 (discovered)",
+    "http402": true,
+    "paid": true,
+    "tx": "63a919c2865e01fc8b118ac53c944e4af58e9ac0735d8a4ef7c2a00dce6c2c64",
+    "verified": true,
+    "state": "ok",
+    "latencyMs": 5028,
+    "error": null,
+    "cid": "QmZuRAGe8Jht7P6i8CZHza2Kzhb8XR9kuoKN8hXEyszyuf"
+  },
+  {
+    "ts": "2026-10-25T22:30:49.223Z",
+    "endpoint": "https://demo.rail402.dev/translate",
+    "facilitator": "rail402 (discovered)",
+    "http402": false,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "down",
+    "latencyMs": 80,
+    "error": "expected 402, got 404",
+    "cid": "QmbE1HbTsxDZjufE13bMKJjXh11nsHgHtJXGYR8MSwR7Mp"
+  }
+]
