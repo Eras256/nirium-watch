@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
 const exec = promisify(execFile);
-const INTERVAL_MS = 15 * 60 * 1000;
+const INTERVAL_MS = 30 * 60 * 1000;
 
 async function run(cmd: string, args: string[]): Promise<boolean> {
   try {

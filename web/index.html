@@ -416,7 +416,7 @@
     <ul class="steps">
       <li><b>Pay like an agent</b> - probe the endpoint with no payment, expect <span class="mono">402</span>, then pay with our own testnet key through Nirium's x402 client.</li>
       <li><b>Verify on-chain</b> - call Stellar RPC <span class="mono">getTransaction(hash)</span> and confirm a real transfer moved the required asset to the required address, for the required amount.</li>
-      <li><b>Anchor a signed receipt</b> - hash the result, sign it with our monitor key, and anchor it to the Nirium Audit Trail as an IPFS CID.</li>
+      <li><b>Pin a signed receipt</b> - hash the round's results, sign them with our monitor key, and pin that record (Nirium Audit Trail's <span class="mono">nirium-audit-v1</span> format) to IPFS - one receipt per round.</li>
     </ul>
   </div>
 </section>
@@ -500,6 +500,10 @@
       <details>
         <summary>Why would a check fail?</summary>
         <p>A dead endpoint, a facilitator outage, or a discovered route that needs parameters we do not send. Failures stay on the page as real history, not hidden.</p>
+      </details>
+      <details>
+        <summary>Why did receipts stop going through Nirium's Audit Trail?</summary>
+        <p>Receipts before 2026-10-26 08:20 UTC were anchored through Nirium's Audit Trail service, one per endpoint check. After that we switched to signing and pinning each round's receipt directly to our own Pinata account - same record format, one receipt per round instead of one per endpoint. The Audit Trail pins every anchored receipt to a shared free-tier Pinata account, and at our check volume we were on pace to push that shared account toward its pin limit, which would have broken anchoring for everyone using it, not just us.</p>
       </details>
     </div>
   </div>

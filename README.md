@@ -19,7 +19,7 @@ Three Stellar x402 facilitators were just funded in SCF round #45 — this probl
 
 ## What it does
 
-Nirium Watch pays each endpoint the way an agent would, on **testnet**, then confirms **on chain** that the money actually moved to the right `payTo` for the right amount. Every result is a signed, independently verifiable receipt (Nirium Audit Trail, IPFS CID). A public status page shows it per endpoint and per facilitator.
+Nirium Watch pays each endpoint the way an agent would, on **testnet**, then confirms **on chain** that the money actually moved to the right `payTo` for the right amount. Every check round produces a signed, independently verifiable receipt — signed with our monitor key and pinned to IPFS in the Nirium Audit Trail record format (`nirium-audit-v1`). A public status page shows it per endpoint and per facilitator.
 
 ```
 endpoints (static list + Rail402 Bazaar discovery)
@@ -34,13 +34,13 @@ pay:    Nirium x402 client, testnet buyer key --> expect 200 + payment-response 
 verify: Stellar RPC getTransaction(hash) --> SUCCESS? SAC transfer event to payTo for amount?
    |
    v
-record: result JSON -> sha256 -> signed with the monitor key -> Nirium Audit Trail anchor (CID)
+record: round's results -> sha256 -> signed with the monitor key -> pinned to IPFS, nirium-audit-v1 record (CID)
    |
    v
 data/history.json --> status page (web/) on Vercel, fetched live from this repo
 ```
 
-`npm run watch` runs this on a 15-minute loop and commits + pushes `data/history.json` itself — no GitHub Actions dependency. In production it runs as a small worker on Fly.io (`nirium-watch`, Dockerfile at repo root), not on anyone's laptop — see `fly.toml`. The AgentSmith seller (below) is a second, separate Fly app (`nirium-watch-agentsmith-seller`, Dockerfile + fly.toml in `agentsmith-seller/`).
+`npm run watch` runs this on a 30-minute loop and commits + pushes `data/history.json` itself — no GitHub Actions dependency. In production it runs as a small worker on Fly.io (`nirium-watch`, Dockerfile at repo root), not on anyone's laptop — see `fly.toml`. The AgentSmith seller (below) is a second, separate Fly app (`nirium-watch-agentsmith-seller`, Dockerfile + fly.toml in `agentsmith-seller/`).
 
 ### Phase 2: Pullcord alerts
 
@@ -80,8 +80,9 @@ npm test                  # unit tests: 402 header parsing, on-chain verify logi
 | Var | Purpose |
 |---|---|
 | `STELLAR_SECRET` | buyer key — holds testnet USDC, pays each endpoint |
-| `MONITOR_SECRET` | monitor key — signs receipts before anchoring, holds no funds |
+| `MONITOR_SECRET` | monitor key — signs each round's receipt before pinning, holds no funds |
 | `PULLCORD_ALERT_SECRET` | per-source HMAC secret for Pullcord's alert intake (phase 2; optional — alerts are skipped if unset) |
+| `PINATA_JWT` | our own Pinata account, used to pin each round's signed receipt to IPFS (see below) |
 
 ## Design
 
@@ -95,10 +96,16 @@ Nearest prior art we found: [`carstenjacobsen/x402-testing-tool`](https://github
 
 Everything in this repo (`src/`, `web/`, `test/`, `agentsmith-seller/`) was written during HackMeridian. It depends on, but does not copy from:
 
-- [`nirium`](https://www.npmjs.com/package/nirium) `0.16.1` — Stellar x402 SDK, used for `Agent.x402Fetch` and `Agent.anchorAuditRecord`.
-- The Nirium Audit Trail testnet node, used to anchor signed receipts (tag `nirium-watch`, excluded from any aggregate Nirium reporting — these are self-generated monitoring receipts, not organic traffic).
+- [`nirium`](https://www.npmjs.com/package/nirium) `0.16.1` — Stellar x402 SDK, used for `Agent.x402Fetch`.
+- The Nirium Audit Trail's record format (`nirium-audit-v1`) — same shape of signed record, same field names. We no longer call the Audit Trail's `anchorAuditRecord` service; see "Receipts" below for why.
 - The Nirium testnet agent (`nirium-agent.fly.dev`), used as one of the endpoints checked.
 - [Pullcord](https://pullcord-notify.fly.dev) — its existing, already-deployed external alert intake (`/v1/alerts/external`), used in phase 2 to notify on state changes. We did not modify Pullcord's repo or service; we only call its public alert-intake route with a per-source secret issued to us.
+
+## Receipts
+
+Each check round's results are signed with our monitor key and pinned directly to our own Pinata account, in the same signed-record format the Nirium Audit Trail uses (`nirium-audit-v1`: `content_sha256`, an ed25519 `agent` signature over `nirium-audit-v1:<sha256>`, `network`, `tag`, and `node: "nirium-watch"` so it's never confused with an actual Nirium node). One receipt covers the whole round (all endpoints checked that tick), not one per endpoint.
+
+Receipts before **2026-10-26 08:20 UTC** were anchored through Nirium's Audit Trail service (`anchorAuditRecord`, one per endpoint check). After that we switched to pinning directly, one receipt per round. The reason is pin volume on a shared account: Nirium's Audit Trail pins every anchored receipt to Nirium's own Pinata account, and at one-per-endpoint-per-15-minutes across all our monitored endpoints we were on pace to push that shared free-tier account toward its pin limit — which would have broken anchoring for everyone using the Audit Trail, not just us. Pinning to our own account, once per round, at a 30-minute interval, fixes that.
 
 ## Honest limits
 

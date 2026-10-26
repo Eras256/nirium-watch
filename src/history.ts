@@ -16,8 +16,16 @@ export async function readHistory(path = HISTORY_PATH): Promise<HistoryRecord[]>
 
 /** Append one record and write the file back out, keeping the most recent 500 per endpoint bounded overall. */
 export async function appendHistory(record: HistoryRecord, path = HISTORY_PATH): Promise<HistoryRecord[]> {
+  return appendHistoryBatch([record], path);
+}
+
+/** Append several records (e.g. a whole check round) in a single read+write. */
+export async function appendHistoryBatch(
+  records: HistoryRecord[],
+  path = HISTORY_PATH,
+): Promise<HistoryRecord[]> {
   const existing = await readHistory(path);
-  const next = [...existing, record].slice(-2000);
+  const next = [...existing, ...records].slice(-2000);
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, JSON.stringify(next, null, 2) + '\n', 'utf8');
   return next;

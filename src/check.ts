@@ -3,7 +3,7 @@ import { probe } from './probe.js';
 import { pay } from './pay.js';
 import { verify } from './verify.js';
 import { anchor } from './anchor.js';
-import { appendHistory, readHistory, latestByEndpoint } from './history.js';
+import { appendHistoryBatch, readHistory, latestByEndpoint } from './history.js';
 import { allTargets } from './targets.js';
 import { alertOnStateChange } from './pullcord.js';
 import type { CheckState, EndpointTarget, HistoryRecord } from './types.js';
@@ -14,13 +14,14 @@ function classify(http402: boolean, paid: boolean, verified: boolean): CheckStat
   return 'down';
 }
 
+/** Probe, pay, and verify one target. Does not anchor or append — that happens once per round. */
 export async function checkOne(target: EndpointTarget): Promise<HistoryRecord> {
   const start = Date.now();
   const ts = new Date().toISOString();
 
   const probed = await probe(target.url);
   if (!probed.ok || !probed.requirement) {
-    const record: HistoryRecord = {
+    return {
       ts,
       endpoint: target.url,
       facilitator: target.facilitator,
@@ -33,13 +34,11 @@ export async function checkOne(target: EndpointTarget): Promise<HistoryRecord> {
       error: probed.error ?? 'probe failed',
       cid: null,
     };
-    await safeAnchorAndAppend(record);
-    return record;
   }
 
   const paid = await pay(target.url);
   if (!paid.ok || !paid.tx) {
-    const record: HistoryRecord = {
+    return {
       ts,
       endpoint: target.url,
       facilitator: target.facilitator,
@@ -52,12 +51,10 @@ export async function checkOne(target: EndpointTarget): Promise<HistoryRecord> {
       error: paid.error ?? 'payment failed',
       cid: null,
     };
-    await safeAnchorAndAppend(record);
-    return record;
   }
 
   const verified = await verify(paid.tx, probed.requirement);
-  const record: HistoryRecord = {
+  return {
     ts,
     endpoint: target.url,
     facilitator: target.facilitator,
@@ -70,29 +67,34 @@ export async function checkOne(target: EndpointTarget): Promise<HistoryRecord> {
     error: verified.verified ? null : verified.reason,
     cid: null,
   };
-  await safeAnchorAndAppend(record);
-  return record;
-}
-
-async function safeAnchorAndAppend(record: HistoryRecord): Promise<void> {
-  try {
-    const { cid } = await anchor(record);
-    record.cid = cid;
-  } catch (err) {
-    console.error(`anchor failed for ${record.endpoint}:`, err instanceof Error ? err.message : err);
-  }
-  await appendHistory(record);
 }
 
 async function main() {
   const targets = await allTargets();
   const previousByEndpoint = latestByEndpoint(await readHistory());
 
+  const records: HistoryRecord[] = [];
   for (const target of targets) {
-    const previous = previousByEndpoint.get(target.url);
     const record = await checkOne(target);
+    records.push(record);
+    console.log(`[${record.state.toUpperCase()}] ${target.name} — ${record.error ?? 'settled'} tx=${record.tx ?? '-'}`);
+  }
+
+  // One signed receipt covers every result in this round, instead of one
+  // per endpoint — keeps our own Pinata account's pin count low.
+  try {
+    const { cid } = await anchor(records);
+    for (const record of records) record.cid = cid;
+    console.log(`round anchored: cid=${cid}`);
+  } catch (err) {
+    console.error('anchor failed for this round:', err instanceof Error ? err.message : err);
+  }
+
+  await appendHistoryBatch(records);
+
+  for (const record of records) {
+    const previous = previousByEndpoint.get(record.endpoint);
     await alertOnStateChange(previous, record);
-    console.log(`[${record.state.toUpperCase()}] ${target.name} — ${record.error ?? 'settled'} tx=${record.tx ?? '-'} cid=${record.cid ?? '-'}`);
   }
 }
 
