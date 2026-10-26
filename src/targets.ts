@@ -17,6 +17,11 @@ export const STATIC_TARGETS: EndpointTarget[] = [
     url: 'https://demo.rail402.dev/weather?city=Istanbul',
     facilitator: 'Rail402 (fees sponsored)',
   },
+  {
+    name: 'AgentSmith weather (our seller)',
+    url: 'https://turbo-tundra-yn51wpo.tmp.now/premium/weather?city=Lisbon',
+    facilitator: 'AgentSmith (our seller, their facilitator)',
+  },
 ];
 
 /** Static targets plus whatever the Rail402 Bazaar discovery feed currently lists (best effort). */

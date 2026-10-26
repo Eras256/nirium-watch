@@ -1,0 +1,17 @@
+{
+  "name": "agentsmith-seller",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Our own x402 seller, running against AgentSmith's (57Blocks) public testnet facilitator — not an AgentSmith product.",
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@x402/core": "^2.28.0",
+    "@x402/express": "^2.28.0",
+    "@x402/stellar": "^2.28.0",
+    "express": "^4.21.2",
+    "nirium": "0.16.1"
+  }
+}
