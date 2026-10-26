@@ -12,6 +12,8 @@ Facilitators checked: OpenZeppelin (through our own Nirium testnet agent), Rail4
 - [Source code](https://github.com/Eras256/nirium-watch): MIT, TypeScript
 - [README](https://github.com/Eras256/nirium-watch/blob/main/README.md): architecture, setup, prior work disclosure, honest limits
 - [Raw check history](https://github.com/Eras256/nirium-watch/blob/main/data/history.json): every check, with tx hash and receipt CID
+- [Nirium](https://nirium.xyz): our own prior work (x402 client, receipt format, testnet agent)
+- [Pullcord](https://www.pullcord.xyz): our own prior work (Stellar alerts); its external alert intake route was added during HackMeridian
 
 ## Honest limits
 

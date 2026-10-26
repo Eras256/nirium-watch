@@ -315,6 +315,8 @@
   .sev.warning { color: var(--degraded); border: 1px solid var(--degraded); }
   .sev.info { color: var(--teal); border: 1px solid var(--teal); }
   .sev.test { color: var(--muted); border: 1px solid var(--border); }
+  .sub a, .limits a, .faq-list a, .alert-note a { color: var(--teal); text-decoration: none; }
+  .sub a:hover, .limits a:hover, .faq-list a:hover, .alert-note a:hover { text-decoration: underline; }
   .evidence-list li.test-group { grid-column: 1 / -1; background: none; border: 0; padding: 0; }
   .test-group summary { cursor: pointer; color: var(--muted); font-size: 0.85rem; padding: 6px 0; }
   .test-group .evidence-list { margin-top: 10px; }
@@ -494,7 +496,7 @@
 <section id="alerts">
   <div class="wrap">
     <h2>Alerts</h2>
-    <p class="sub">When an endpoint changes state, Nirium Watch sends one signed alert to Pullcord, our own earlier alerting project. No repeats while a failure persists.</p>
+    <p class="sub">When an endpoint changes state, Nirium Watch sends one signed alert to <a href="https://www.pullcord.xyz" target="_blank" rel="noopener">Pullcord</a>, our own earlier alerting project. No repeats while a failure persists.</p>
     <div class="alert-rules">
       <div class="alert-rule"><span class="sev warning">warning</span> settled &rarr; failing</div>
       <div class="alert-rule"><span class="sev info">info</span> failing &rarr; settled again</div>
@@ -509,7 +511,7 @@
     <ul class="evidence-list" id="pullcord-list">
       <li class="loading">Loading...</li>
     </ul>
-    <p class="alert-note">Read live from Pullcord's public alert log (<span class="mono">GET /v1/alerts/external?source=nirium-watch</span>): what Pullcord verified and stored. Test alerts are labeled as tests.</p>
+    <p class="alert-note">Read live from Pullcord's public alert log (<span class="mono">GET /v1/alerts/external?source=nirium-watch</span>): what Pullcord verified and stored. The same alerts show on <a href="https://www.pullcord.xyz/#alertas" target="_blank" rel="noopener">pullcord.xyz</a>. Test alerts are labeled as tests.</p>
   </div>
 </section>
 
@@ -543,6 +545,7 @@
     <ul class="limits">
       <li><strong>No partnerships.</strong> None with OpenZeppelin, Rail402 or AgentSmith. We only call their public testnet endpoints.</li>
       <li><strong>Nirium is our own prior work.</strong> Built before this event, disclosed, and used here as a dependency, not written during HackMeridian.</li>
+      <li><strong>Pullcord is our own earlier project too.</strong> It existed before this event; only its external alert intake route was added during HackMeridian, in Pullcord's own repo, so Nirium Watch could send it alerts.</li>
       <li><strong>Testnet only.</strong> Every payment uses our own testnet key. No mainnet secret exists anywhere in this project.</li>
       <li><strong>One failed check is not proof a facilitator is "down."</strong> This page shows history, not verdicts.</li>
     </ul>
@@ -567,7 +570,11 @@
       </details>
       <details>
         <summary>What is Nirium?</summary>
-        <p>Nirium is our own prior work: an x402 toolkit for Stellar and an audit trail service, both built before this event. We use them here; we did not build them during HackMeridian.</p>
+        <p>Nirium is our own prior work: an x402 toolkit for Stellar and an audit trail service, both built before this event. We use them here; we did not build them during HackMeridian. More at <a href="https://nirium.xyz" target="_blank" rel="noopener">nirium.xyz</a>.</p>
+      </details>
+      <details>
+        <summary>What is Pullcord?</summary>
+        <p>Pullcord is our own earlier project: alerts for what you hold on Stellar, such as a protocol you use changing or pausing, your tokens being frozen or clawed back, or a payment arriving. It existed before this event. During HackMeridian we added one route to Pullcord's repo, an external alert intake (<span class="mono">POST /v1/alerts/external</span>, commit <span class="mono">4f131f2</span>), so Nirium Watch can send it signed alerts. More at <a href="https://www.pullcord.xyz" target="_blank" rel="noopener">pullcord.xyz</a>.</p>
       </details>
       <details>
         <summary>Why would a check fail?</summary>
@@ -610,6 +617,7 @@
           <li><a href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">Source code</a></li>
           <li><a href="https://github.com/Eras256/nirium-watch/blob/main/data/history.json" target="_blank" rel="noopener">Raw history.json</a></li>
           <li><a href="https://nirium.xyz" target="_blank" rel="noopener">Nirium (our prior work)</a></li>
+          <li><a href="https://www.pullcord.xyz" target="_blank" rel="noopener">Pullcord (our prior work)</a></li>
         </ul>
       </div>
       <div class="foot-col">
@@ -617,7 +625,7 @@
         <ul>
           <li>Stellar testnet only.</li>
           <li>No partnerships with any facilitator.</li>
-          <li>Nirium is our own prior work, disclosed.</li>
+          <li>Nirium and Pullcord are our own prior work, disclosed.</li>
         </ul>
       </div>
     </div>
