@@ -610,7 +610,9 @@
 
   function fmtTime(ts) {
     const d = new Date(ts);
-    return d.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
+    // Viewer's own time zone, labeled, so a judge in Lisbon and a builder in
+    // Mexico both read it correctly.
+    return d.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric', timeZoneName: 'short' });
   }
 
   function txLinkHtml(tx) {
