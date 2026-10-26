@@ -387,7 +387,7 @@
     h2 { font-size: 1.6rem; margin-bottom: 24px; }
     .sub { font-size: 1.1rem; max-width: 640px; }
     .pipe-steps li { font-size: 0.9rem; }
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .steps li { padding: 52px 18px 18px; }
     .steps li::before { left: 18px; top: 18px; }
     .facilitators { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -399,6 +399,7 @@
   @media (min-width: 1024px) {
     .wrap { max-width: 1120px; }
     main#cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; align-items: start; }
+    .steps { grid-template-columns: repeat(4, 1fr); }
     main#cards > .loading, main#cards > .empty-state { grid-column: 1 / -1; }
   }
 </style>
@@ -427,7 +428,7 @@
   <div class="wrap" id="top">
     <span class="badge">Built at HackMeridian 2026 (remote)</span>
     <h1>A <span class="accent">402</span> is a promise.<br>A settled transaction is <span class="accent">proof</span>.</h1>
-    <p class="sub">Nirium Watch pays x402 endpoints on Stellar testnet the way an agent would, then checks on-chain that the payment actually settled. Every result is a signed, independently verifiable receipt.</p>
+    <p class="sub">Every 30 minutes, Nirium Watch pays x402 endpoints on Stellar testnet the way an agent would, then checks on-chain that the payment actually settled. Every round ends in a signed receipt anyone can verify.</p>
     <div class="cta-row">
       <a class="btn primary" href="#status">See live status</a>
       <a class="btn ghost" href="#evidence">See the evidence</a>
@@ -462,9 +463,10 @@
   <div class="wrap">
     <h2>How it works</h2>
     <ul class="steps">
-      <li><b>Pay like an agent</b> - probe the endpoint with no payment, expect <span class="mono">402</span>, then pay with our own testnet key through Nirium's x402 client.</li>
+      <li><b>Pay like an agent</b> - every 30 minutes, probe each endpoint with no payment, expect <span class="mono">402</span>, then pay with our own testnet key through Nirium's x402 client.</li>
       <li><b>Verify on-chain</b> - call Stellar RPC <span class="mono">getTransaction(hash)</span> and confirm a real transfer moved the required asset to the required address, for the required amount.</li>
       <li><b>Pin a signed receipt</b> - hash the round's results, sign them with our monitor key, and pin that record (Nirium Audit Trail's <span class="mono">nirium-audit-v1</span> format) to IPFS - one receipt per round.</li>
+      <li><b>Alert on change</b> - when an endpoint goes from settled to failing, or back, send one HMAC-signed alert to Pullcord. No repeats while a failure persists.</li>
     </ul>
   </div>
 </section>
@@ -631,7 +633,7 @@
     </div>
     <div class="foot-bottom">
       <span>&copy; <span id="foot-year"></span> Nirium Watch</span>
-      <span>Built at HackMeridian 2026 (remote)</span>
+      <span>Built by Giovanny Amador and Monserrat Mendoza at HackMeridian 2026 (remote)</span>
     </div>
   </div>
 </footer>
@@ -645,6 +647,11 @@
     }[c]));
   }
 
+  // history.json keeps the worker's raw labels ("rail402 (discovered)"); show the brand's capitalization.
+  function facLabel(s) {
+    return String(s).replace(/^rail402\b/, 'Rail402');
+  }
+
   function shortHash(h) {
     return h ? h.slice(0, 8) + '...' + h.slice(-6) : null;
   }
@@ -653,7 +660,9 @@
     const d = new Date(ts);
     // Viewer's own time zone, labeled, so a judge in Lisbon and a builder in
     // Mexico both read it correctly.
-    return d.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric', timeZoneName: 'short' });
+    // Non-breaking hyphen/plus so "GMT-6" never splits across lines on phones.
+    return d.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric', timeZoneName: 'short' })
+      .replace(/GMT-/g, 'GMT‑').replace(/GMT\+/g, 'GMT +');
   }
 
   function txLinkHtml(tx) {
@@ -713,11 +722,12 @@
           <div class="dot ${state}"></div>
           <div>
             <div class="name">${escapeHtml(endpoint.replace(/^https?:\/\//, ''))}</div>
-            <div class="facilitator">${escapeHtml(latest.facilitator)}</div>
+            <div class="facilitator">${escapeHtml(facLabel(latest.facilitator))}</div>
           </div>
         </div>
         <dl class="meta">
           <div><dt>Last checked</dt><dd>${escapeHtml(fmtTime(latest.ts))}</dd></div>
+          <div><dt title="Checks where the payment settled and was verified on chain">Settled</dt><dd>${list.filter((r) => r.state === 'ok').length} of ${list.length} checks</dd></div>
           <div><dt title="Probe + pay + settle + verify on chain, not the endpoint's response time">Check time</dt><dd>${escapeHtml(latest.latencyMs)} ms</dd></div>
           <div><dt>Last settled tx</dt><dd>${txLinkHtml(latest.tx)}</dd></div>
           <div><dt>Receipt</dt><dd>${cidLinkHtml(latest.cid)}</dd></div>
@@ -742,7 +752,7 @@
     }
     const latest = withTx[0];
     proofEl.innerHTML =
-      `Latest real settlement: ${txLinkHtml(latest.tx)} via ${escapeHtml(latest.facilitator)}, receipt ${cidLinkHtml(latest.cid)}.`;
+      `Latest real settlement: ${txLinkHtml(latest.tx)} via ${escapeHtml(facLabel(latest.facilitator))}, receipt ${cidLinkHtml(latest.cid)}.`;
   }
 
   function renderStats(records) {
@@ -781,7 +791,7 @@
       <li>
         <div class="ev-top">
           <span>${escapeHtml(r.endpoint.replace(/^https?:\/\//, ''))}</span>
-          <span>${escapeHtml(r.facilitator)} - ${escapeHtml(fmtTime(r.ts))}</span>
+          <span>${escapeHtml(facLabel(r.facilitator))} - ${escapeHtml(fmtTime(r.ts))}</span>
         </div>
         <div class="ev-links">
           <span>tx ${txLinkHtml(r.tx)}</span>
@@ -823,7 +833,7 @@
       <li>
         <div class="ev-top">
           <span><span class="sev ${failing ? 'warning' : 'info'}">${failing ? 'warning' : 'info'}</span> ${escapeHtml(r.endpoint.replace(/^https?:\/\//, ''))}</span>
-          <span>${escapeHtml(r.facilitator)} - ${escapeHtml(fmtTime(r.ts))}</span>
+          <span>${escapeHtml(facLabel(r.facilitator))} - ${escapeHtml(fmtTime(r.ts))}</span>
         </div>
         <div class="ev-links">
           <span>${prevState} &rarr; ${state}</span>
