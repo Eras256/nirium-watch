@@ -3,7 +3,7 @@
 **Uptime and settlement checks for x402 APIs on Stellar.**
 
 Live status page: **https://nirium-watch.vercel.app**
-Built during HackMeridian 2026: remote, testnet only, not prize-eligible (see [Eligibility](#eligibility)).
+Built remotely during HackMeridian 2026 as a non-competing showcase, testnet only (see [Eligibility](#eligibility)).
 
 ## Problem
 
@@ -125,7 +125,7 @@ Receipts up to **2026-10-26 08:09 UTC** were anchored through Nirium's Audit Tra
 
 ## Eligibility
 
-We built remotely, not on site in Lisbon, so this submission is **not eligible for a prize** under HackMeridian's rules. We're submitting the working artifact for review and feedback.
+HackMeridian is in person only, with no remote track. We built remotely, were not in Lisbon, and told the organizers on 26-oct-2026 that this submission is **non-competing**: please treat it as a showcase of what we built that weekend, not as a prize entry.
 
 ## License
 

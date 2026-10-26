@@ -1,6 +1,6 @@
 # Nirium Watch
 
-> Live settlement checks for x402 APIs on Stellar testnet. A 402 is a promise; a settled transaction is proof. Built at HackMeridian 2026 (remote, Genesis track, not prize-eligible).
+> Live settlement checks for x402 APIs on Stellar testnet. A 402 is a promise; a settled transaction is proof. Built remotely during HackMeridian 2026 as a non-competing showcase (HackMeridian is in person only; we were not in Lisbon).
 
 Nirium Watch pays each monitored x402 endpoint the way an AI agent would, with our own testnet key, then reads the transaction back from Stellar RPC (`getTransaction`) and confirms a SAC transfer of the required amount reached the required `payTo`. Each check round is signed with an ed25519 monitor key and pinned to IPFS as one receipt (`nirium-audit-v1` record format). On a state change (settled to failing, or back), it sends an HMAC-signed alert to Pullcord.
 

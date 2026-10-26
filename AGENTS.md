@@ -7,7 +7,7 @@ Nirium Watch: uptime and settlement checks for x402 APIs on Stellar. See `thesis
 ## Rules
 
 - **Deadline:** submissions lock Mon 26-oct 12:00 Lisbon = 06:00 Mexico City. Target submitted by 05:00 Mexico. Stop adding features at 02:30 Mexico.
-- **Remote, not prize-eligible.** Never imply we were on-site in Lisbon.
+- **Remote, non-competing.** HackMeridian has no remote track. Never imply we were on site in Lisbon or competing for prizes.
 - **Genesis = new code written during this event.** Nirium (SDK, Audit Trail, testnet agent) and Pullcord (phase 2) are prior work used as dependencies, disclosed in the README. Nothing from either repo is copied into this repo.
 - **Testnet only.** Never put a mainnet secret anywhere.
 - **Identity before any write:** `gh api user --jq .login` must print `Eras256`. In this repo only (no `--global`): `git config user.name "Giovanny Amador"` and `git config user.email "219895655+Eras256@users.noreply.github.com"`. Push with `git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push`.
