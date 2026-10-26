@@ -3,8 +3,9 @@ import { probe } from './probe.js';
 import { pay } from './pay.js';
 import { verify } from './verify.js';
 import { anchor } from './anchor.js';
-import { appendHistory } from './history.js';
+import { appendHistory, readHistory, latestByEndpoint } from './history.js';
 import { allTargets } from './targets.js';
+import { alertOnStateChange } from './pullcord.js';
 import type { CheckState, EndpointTarget, HistoryRecord } from './types.js';
 
 function classify(http402: boolean, paid: boolean, verified: boolean): CheckState {
@@ -85,8 +86,12 @@ async function safeAnchorAndAppend(record: HistoryRecord): Promise<void> {
 
 async function main() {
   const targets = await allTargets();
+  const previousByEndpoint = latestByEndpoint(await readHistory());
+
   for (const target of targets) {
+    const previous = previousByEndpoint.get(target.url);
     const record = await checkOne(target);
+    await alertOnStateChange(previous, record);
     console.log(`[${record.state.toUpperCase()}] ${target.name} — ${record.error ?? 'settled'} tx=${record.tx ?? '-'} cid=${record.cid ?? '-'}`);
   }
 }

@@ -42,6 +42,10 @@ data/history.json --> status page (web/) on Vercel, fetched live from this repo
 
 `npm run watch` runs this on a 15-minute loop and commits + pushes `data/history.json` itself — no GitHub Actions dependency.
 
+### Phase 2: Pullcord alerts
+
+On a state change per endpoint (settled → failing, failing → recovered), Nirium Watch posts a signed alert to Pullcord's external alert intake (`POST /v1/alerts/external`, HMAC-SHA256 over `<timestamp>.<rawBody>` in the `Pullcord-Signature` header). One alert per endpoint per state change — no repeats while a failure persists. See `src/pullcord.ts`.
+
 ## Endpoints checked
 
 | Endpoint | Facilitator | Price |
@@ -74,6 +78,7 @@ npm test                  # unit tests: 402 header parsing, on-chain verify logi
 |---|---|
 | `STELLAR_SECRET` | buyer key — holds testnet USDC, pays each endpoint |
 | `MONITOR_SECRET` | monitor key — signs receipts before anchoring, holds no funds |
+| `PULLCORD_ALERT_SECRET` | per-source HMAC secret for Pullcord's alert intake (phase 2; optional — alerts are skipped if unset) |
 
 ## Design
 
@@ -90,6 +95,7 @@ Everything in this repo (`src/`, `web/`, `test/`) was written during HackMeridia
 - [`nirium`](https://www.npmjs.com/package/nirium) `0.16.1` — Stellar x402 SDK, used for `Agent.x402Fetch` and `Agent.anchorAuditRecord`.
 - The Nirium Audit Trail testnet node, used to anchor signed receipts (tag `nirium-watch`, excluded from any aggregate Nirium reporting — these are self-generated monitoring receipts, not organic traffic).
 - The Nirium testnet agent (`nirium-agent.fly.dev`), used as one of the endpoints checked.
+- [Pullcord](https://pullcord-notify.fly.dev) — its existing, already-deployed external alert intake (`/v1/alerts/external`), used in phase 2 to notify on state changes. We did not modify Pullcord's repo or service; we only call its public alert-intake route with a per-source secret issued to us.
 
 ## Honest limits
 
