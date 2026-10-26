@@ -9,6 +9,7 @@ Facilitators checked: OpenZeppelin (through our own Nirium testnet agent), Rail4
 ## Links
 
 - [Live status page](https://nirium-watch.vercel.app/): per-endpoint status, settled transactions, receipts, alerts
+- [Demo video](https://youtu.be/EsRlyNw33n8): about 3 minutes, in English
 - [Source code](https://github.com/Eras256/nirium-watch): MIT, TypeScript
 - [README](https://github.com/Eras256/nirium-watch/blob/main/README.md): architecture, setup, prior work disclosure, honest limits
 - [Raw check history](https://github.com/Eras256/nirium-watch/blob/main/data/history.json): every check, with tx hash and receipt CID

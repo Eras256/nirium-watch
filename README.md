@@ -5,6 +5,13 @@
 Live status page: **https://nirium-watch.vercel.app**
 Built remotely during HackMeridian 2026 as a non-competing showcase, testnet only (see [Eligibility](#eligibility)).
 
+## HackMeridian submission
+
+- **Submitted:** 26-oct-2026, about 04:40 Mexico time. Genesis track, built remotely, non-competing. The portal closed at 06:00 Mexico time.
+- **Demo video:** [youtu.be/EsRlyNw33n8](https://youtu.be/EsRlyNw33n8). About 3 minutes, in English, with the founder's voice.
+- **Pitch deck:** [docs/pitch-deck.pdf](docs/pitch-deck.pdf), the PDF we submitted.
+- **Numbers:** the submitted form said 87 checks and 72 settled payments. That was a snapshot from 26-oct 09:17 UTC. The status page shows live numbers. For reference, at 17:05 UTC the same history had 199 checks and 165 settled payments verified on chain (168 had a tx hash; 3 were not yet visible to the RPC and stayed degraded).
+
 ## Problem
 
 An x402 endpoint that answers `402 Payment Required` proves nothing about whether you can actually get paid. A facilitator can stay broken for weeks while every endpoint behind it keeps returning a perfect 402. On Stellar this already happened: the OpenZeppelin facilitator's issue #47 (~32-day outage) was diagnosed by hand by four separate integrators. We were burned ourselves: a payment method we listed as "live" had zero settled payments, and nothing caught it.
@@ -122,6 +129,25 @@ Receipts up to **2026-10-26 08:09 UTC** were anchored through Nirium's Audit Tra
 - **A failed check is not proof a facilitator is "down."** One failure just means one failed check at one timestamp; the status page shows history, not verdicts.
 - **Testnet only.** No mainnet secret exists anywhere in this project.
 - **Rail402 Bazaar discovery is called literally.** Discovered resources are requested exactly as listed, without special-casing. If one doesn't answer with a 402 (e.g. `/translate` returned 404 on 26-oct-2026), it shows up honestly as `down`.
+
+## Challenges
+
+- **Proving settlement from the transaction itself.** A 200 response or a facilitator's reply is not proof. We read the Stellar transaction back from RPC and check the SAC transfer event: the asset, the recipient and the amount.
+- **AgentSmith had a public facilitator but no demo seller.** So we wrote our own. It first failed on Vercel serverless with `ERR_REQUIRE_ESM` inside an ESM-only dependency, so it runs on Fly.io.
+- **Receipt volume.** We moved from one anchored receipt per endpoint to one signed receipt per round, on our own Pinata account, at a 30-minute interval. The record format is the same. The cutover (08:09 / 08:11 UTC) is explained under [Receipts](#receipts).
+- **Stale and synthetic results.** Replaced endpoints are kept as "retired", and test alerts are collapsed. The page should never show an old failure or a synthetic one as if it were real.
+
+## What's next
+
+- Add Rumble Fish when its facilitator is live. Its repo was a skeleton on 26-oct.
+- Find the first external users. Today there are none.
+- Alerts to people who opt in, through Pullcord.
+- A daily signed digest and an embeddable status badge.
+- Wire-format conformance checks per facilitator.
+
+## How it was built (AI tooling)
+
+Claude Code (Claude Opus and Claude Sonnet) wrote most of the TypeScript (probe, pay, verify, receipts, alerts), the tests and the status page. A second Claude Code session helped with the landing redesign and the AgentSmith seller. The humans chose the scope, checked every claim against the chain and the live endpoints, and reviewed the changes. The landing redesign came in as a reviewed pull request. AI co-authorship is recorded in the commit trailers (`Co-Authored-By`).
 
 ## Eligibility
 
