@@ -40,7 +40,7 @@ record: result JSON -> sha256 -> signed with the monitor key -> Nirium Audit Tra
 data/history.json --> status page (web/) on Vercel, fetched live from this repo
 ```
 
-`npm run watch` runs this on a 15-minute loop and commits + pushes `data/history.json` itself — no GitHub Actions dependency.
+`npm run watch` runs this on a 15-minute loop and commits + pushes `data/history.json` itself — no GitHub Actions dependency. In production it runs as a small worker on Fly.io (`nirium-watch`, Dockerfile at repo root), not on anyone's laptop — see `fly.toml`.
 
 ### Phase 2: Pullcord alerts
 

@@ -93,6 +93,12 @@
 <script>
   const HISTORY_URL = 'https://raw.githubusercontent.com/Eras256/nirium-watch/main/data/history.json';
 
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[c]));
+  }
+
   function shortHash(h) {
     return h ? h.slice(0, 8) + '…' + h.slice(-6) : null;
   }
@@ -125,29 +131,30 @@
       card.className = 'card';
 
       const txLink = latest.tx
-        ? `<a href="https://stellar.expert/explorer/testnet/tx/${latest.tx}" target="_blank" rel="noopener" class="mono">${shortHash(latest.tx)}</a>`
+        ? `<a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(latest.tx)}" target="_blank" rel="noopener" class="mono">${escapeHtml(shortHash(latest.tx))}</a>`
         : '—';
       const cidLink = latest.cid
-        ? `<a href="https://gateway.pinata.cloud/ipfs/${latest.cid}" target="_blank" rel="noopener" class="mono">${shortHash(latest.cid)}</a>`
+        ? `<a href="https://gateway.pinata.cloud/ipfs/${encodeURIComponent(latest.cid)}" target="_blank" rel="noopener" class="mono">${escapeHtml(shortHash(latest.cid))}</a>`
         : '—';
+      const state = ['ok', 'degraded', 'down'].includes(latest.state) ? latest.state : 'down';
 
       card.innerHTML = `
         <div class="card-top">
-          <div class="dot ${latest.state}"></div>
+          <div class="dot ${state}"></div>
           <div>
-            <div class="name">${endpoint.replace(/^https?:\/\//, '')}</div>
-            <div class="facilitator">${latest.facilitator}</div>
+            <div class="name">${escapeHtml(endpoint.replace(/^https?:\/\//, ''))}</div>
+            <div class="facilitator">${escapeHtml(latest.facilitator)}</div>
           </div>
         </div>
         <dl class="meta">
-          <div><dt>Last checked</dt><dd>${fmtTime(latest.ts)}</dd></div>
-          <div><dt>Latency</dt><dd>${latest.latencyMs} ms</dd></div>
+          <div><dt>Last checked</dt><dd>${escapeHtml(fmtTime(latest.ts))}</dd></div>
+          <div><dt>Latency</dt><dd>${escapeHtml(latest.latencyMs)} ms</dd></div>
           <div><dt>Last settled tx</dt><dd>${txLink}</dd></div>
           <div><dt>Receipt</dt><dd>${cidLink}</dd></div>
         </dl>
-        ${latest.error ? `<div class="error">${latest.error}</div>` : ''}
+        ${latest.error ? `<div class="error">${escapeHtml(latest.error)}</div>` : ''}
         <div class="strip">
-          ${padded.map((r) => `<div class="s ${r ? r.state : 'empty'}" title="${r ? fmtTime(r.ts) + ' — ' + r.state : ''}"></div>`).join('')}
+          ${padded.map((r) => `<div class="s ${r && ['ok', 'degraded', 'down'].includes(r.state) ? r.state : 'empty'}" title="${r ? escapeHtml(fmtTime(r.ts) + ' — ' + r.state) : ''}"></div>`).join('')}
         </div>
       `;
       cardsEl.appendChild(card);
