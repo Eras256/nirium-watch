@@ -5,3 +5,5 @@ node_modules
 web/.vercel
 dist
 *.log
+agentsmith-seller
+scripts
