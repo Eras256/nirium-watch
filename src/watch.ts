@@ -16,8 +16,20 @@ async function run(cmd: string, args: string[]): Promise<boolean> {
   }
 }
 
+const PUSH_ARGS = ['-c', 'credential.helper=', '-c', 'credential.helper=!gh auth git-credential'];
+
 async function tick(): Promise<void> {
   console.log(`\n=== watch tick ${new Date().toISOString()} ===`);
+
+  // Sync to the latest remote state before computing anything, so this
+  // tick's commit always starts from current origin/main. We're the only
+  // writer to this repo's history.json; resetting here means the push
+  // below is always a trivial fast-forward, instead of risking a rebase
+  // conflict on an append-only JSON file (which git tends to flag as
+  // "both modified" right at the closing bracket).
+  await run('git', [...PUSH_ARGS, 'fetch', 'origin', 'main']);
+  await run('git', ['reset', '--hard', 'origin/main']);
+
   await run('npx', ['tsx', 'src/check.ts']);
 
   await run('git', ['add', 'data/history.json']);
@@ -28,13 +40,7 @@ async function tick(): Promise<void> {
   }
   const committed = await run('git', ['commit', '-m', `Update history.json (${new Date().toISOString()})`]);
   if (!committed) return;
-  await run('git', [
-    '-c',
-    'credential.helper=',
-    '-c',
-    'credential.helper=!gh auth git-credential',
-    'push',
-  ]);
+  await run('git', [...PUSH_ARGS, 'push']);
 }
 
 async function main() {

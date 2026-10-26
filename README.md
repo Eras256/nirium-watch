@@ -40,7 +40,7 @@ record: result JSON -> sha256 -> signed with the monitor key -> Nirium Audit Tra
 data/history.json --> status page (web/) on Vercel, fetched live from this repo
 ```
 
-`npm run watch` runs this on a 15-minute loop and commits + pushes `data/history.json` itself — no GitHub Actions dependency. In production it runs as a small worker on Fly.io (`nirium-watch`, Dockerfile at repo root), not on anyone's laptop — see `fly.toml`.
+`npm run watch` runs this on a 15-minute loop and commits + pushes `data/history.json` itself — no GitHub Actions dependency. In production it runs as a small worker on Fly.io (`nirium-watch`, Dockerfile at repo root), not on anyone's laptop — see `fly.toml`. The AgentSmith seller (below) is a second, separate Fly app (`nirium-watch-agentsmith-seller`, Dockerfile + fly.toml in `agentsmith-seller/`).
 
 ### Phase 2: Pullcord alerts
 
@@ -53,9 +53,12 @@ On a state change per endpoint (settled → failing, failing → recovered), Nir
 | `nirium-agent.fly.dev/api/v1/premium/market` | OpenZeppelin (via Nirium testnet agent) | 0.05 testnet USDC |
 | `nirium-agent.fly.dev/api/v1/premium/signals` | OpenZeppelin (via Nirium testnet agent) | varies |
 | `demo.rail402.dev/weather?city=Istanbul` | Rail402 (fees sponsored) | 0.001 USDC |
+| `nirium-watch-agentsmith-seller.fly.dev/premium/weather?city=Lisbon` | AgentSmith (57Blocks) testnet facilitator | 0.001 USDC |
 | + up to 3 more, pulled live from the Rail402 Bazaar discovery feed | Rail402 | varies |
 
 Discovery source: `GET https://testnet.rail402.dev/discovery/resources`, capped at 3 extra endpoints per run.
+
+The AgentSmith endpoint is **our own seller** (`agentsmith-seller/`, genesis code, deployed on Fly as `nirium-watch-agentsmith-seller`), built to charge through AgentSmith's (57Blocks) public testnet x402 facilitator so we'd have a third facilitator to monitor. It is not an AgentSmith product and there is no partnership — we just call their public testnet facilitator, same as any other seller could.
 
 Stellar testnet constants used throughout:
 - USDC (SAC): `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA`
@@ -90,7 +93,7 @@ Nearest prior art we found: [`carstenjacobsen/x402-testing-tool`](https://github
 
 ## Prior work (disclosed)
 
-Everything in this repo (`src/`, `web/`, `test/`) was written during HackMeridian. It depends on, but does not copy from:
+Everything in this repo (`src/`, `web/`, `test/`, `agentsmith-seller/`) was written during HackMeridian. It depends on, but does not copy from:
 
 - [`nirium`](https://www.npmjs.com/package/nirium) `0.16.1` — Stellar x402 SDK, used for `Agent.x402Fetch` and `Agent.anchorAuditRecord`.
 - The Nirium Audit Trail testnet node, used to anchor signed receipts (tag `nirium-watch`, excluded from any aggregate Nirium reporting — these are self-generated monitoring receipts, not organic traffic).
@@ -100,7 +103,7 @@ Everything in this repo (`src/`, `web/`, `test/`) was written during HackMeridia
 ## Honest limits
 
 - **All payments are ours.** The buyer key is our own team key. This is not adoption, not customers, not external traffic.
-- **No partnerships.** We have no relationship with OpenZeppelin, Rail402, or Nirium beyond calling their public testnet endpoints.
+- **No partnerships.** We have no relationship with OpenZeppelin, Rail402, AgentSmith/57Blocks, or Nirium beyond calling their public testnet endpoints/facilitators. The AgentSmith seller is ours; AgentSmith only provides the facilitator.
 - **A failed check is not proof a facilitator is "down."** One failure just means one failed check at one timestamp; the status page shows history, not verdicts.
 - **Testnet only.** No mainnet secret exists anywhere in this project.
 - **Rail402 Bazaar discovery is called literally.** A couple of discovered resources are templated (e.g. `/users/:id`) or need query params we don't always supply; those show up honestly as `down` rather than being special-cased.

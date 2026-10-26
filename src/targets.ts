@@ -19,7 +19,7 @@ export const STATIC_TARGETS: EndpointTarget[] = [
   },
   {
     name: 'AgentSmith weather (our seller)',
-    url: 'https://turbo-tundra-yn51wpo.tmp.now/premium/weather?city=Lisbon',
+    url: 'https://nirium-watch-agentsmith-seller.fly.dev/premium/weather?city=Lisbon',
     facilitator: 'AgentSmith (our seller, their facilitator)',
   },
 ];
