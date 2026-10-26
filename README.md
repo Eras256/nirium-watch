@@ -15,7 +15,7 @@ An x402 endpoint that answers `402 Payment Required` proves nothing about whethe
 - **Agent builders:** should my agent trust this seller and this facilitator?
 - **Facilitators:** is my settlement path healthy, end to end?
 
-Two Stellar x402 facilitators, Rail402 and AgentSmith, were just funded in SCF round 45, so this problem is about to matter to more people, not fewer.
+Three Stellar x402 facilitators were just funded in SCF round 45 (Rail402, AgentSmith and Rumble Fish), so this problem is about to matter to more people, not fewer. We check Rail402 and AgentSmith, plus OpenZeppelin's facilitator. Rumble Fish is not checked yet: on 26-oct-2026 its public repo (`rumblefishdev/stellar-x402`) was still marked as a skeleton, with no testnet facilitator to call. We'll add it when one is live.
 
 ## What it does
 
