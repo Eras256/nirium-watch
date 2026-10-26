@@ -121,7 +121,7 @@ Receipts up to **2026-10-26 08:09 UTC** were anchored through Nirium's Audit Tra
 - **No partnerships.** We have no relationship with OpenZeppelin, Rail402 or AgentSmith/57Blocks beyond calling their public testnet endpoints and facilitators. The AgentSmith seller is ours; AgentSmith only provides the facilitator. Nirium and Pullcord are our own earlier projects (see [Prior work](#prior-work-disclosed)).
 - **A failed check is not proof a facilitator is "down."** One failure just means one failed check at one timestamp; the status page shows history, not verdicts.
 - **Testnet only.** No mainnet secret exists anywhere in this project.
-- **Rail402 Bazaar discovery is called literally.** A couple of discovered resources are templated (e.g. `/users/:id`) or need query params we don't always supply; those show up honestly as `down` rather than being special-cased.
+- **Rail402 Bazaar discovery is called literally.** Discovered resources are requested exactly as listed, without special-casing. If one doesn't answer with a 402 (e.g. `/translate` returned 404 on 26-oct-2026), it shows up honestly as `down`.
 
 ## Eligibility
 
