@@ -4,11 +4,13 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Nirium Watch</title>
-<meta name="description" content="Uptime and settlement checks for x402 APIs on Stellar." />
+<meta name="description" content="A 402 is a promise. A settled transaction is proof. Uptime and settlement checks for x402 APIs on Stellar." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230a0f0e'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%232dd4bf' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%232dd4bf'/%3E%3C/svg%3E" />
 <style>
   :root {
     --bg: #0a0f0e;
     --panel: #101917;
+    --panel-2: #0d1513;
     --border: #1d2b28;
     --text: #e6f2ef;
     --muted: #8aa39d;
@@ -17,35 +19,56 @@
     --ok: #34d399;
     --degraded: #fbbf24;
     --down: #f87171;
+    --focus: #5eead4;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6faf9;
+      --panel: #ffffff;
+      --panel-2: #eef5f3;
+      --border: #d7e6e2;
+      --text: #0c1a17;
+      --muted: #4e6b63;
+      --teal: #0f766e;
+      --teal-dim: #d3f3ec;
+      --ok: #15803d;
+      --degraded: #b45309;
+      --down: #b91c1c;
+      --focus: #0f766e;
+    }
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow-x: hidden;
   }
   .mono { font-family: "SF Mono", Consolas, Menlo, monospace; }
-  .wrap { max-width: 820px; margin: 0 auto; padding: 0 16px; }
-  section { padding: 48px 0; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 56px 0; }
   section + section { border-top: 1px solid var(--border); }
-  h1 { font-size: 1.9rem; margin: 0 0 10px; color: var(--teal); letter-spacing: -0.01em; line-height: 1.2; }
-  h2 { font-size: 1.2rem; margin: 0 0 16px; color: var(--text); }
-  h3 { font-size: 0.95rem; margin: 0 0 4px; color: var(--text); }
+  h1 { font-size: 2.1rem; margin: 0 0 14px; color: var(--text); letter-spacing: -0.01em; line-height: 1.2; }
+  h1 .accent { color: var(--teal); }
+  h2 { font-size: 1.3rem; margin: 0 0 18px; color: var(--text); }
   p { line-height: 1.6; }
-  .sub { color: var(--muted); font-size: 1rem; line-height: 1.6; margin: 0 0 20px; max-width: 620px; }
+  .sub { color: var(--muted); font-size: 1.02rem; line-height: 1.6; margin: 0 0 22px; max-width: 600px; }
   .badge {
     display: inline-block;
     border: 1px solid var(--teal-dim);
     color: var(--teal);
-    background: rgba(45, 212, 191, 0.08);
+    background: var(--teal-dim);
     font-size: 0.78rem;
     padding: 5px 12px;
     border-radius: 999px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
-  .cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
   .btn {
     display: inline-block;
     padding: 10px 18px;
@@ -56,14 +79,126 @@
     min-height: 40px;
     line-height: 20px;
   }
-  .btn.primary { background: var(--teal); color: #042e29; }
+  .btn.primary { background: var(--teal); color: var(--bg); }
   .btn.ghost { border: 1px solid var(--border); color: var(--text); }
+  .btn.small { padding: 7px 14px; font-size: 0.82rem; min-height: 32px; line-height: 18px; }
+  a { word-break: break-word; }
+  *:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-  .hero { padding-top: 40px; }
+  /* navbar */
+  .navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .navbar-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+  .brand { color: var(--text); font-weight: 700; text-decoration: none; font-size: 1rem; }
+  .brand .accent { color: var(--teal); }
+  .nav-links { display: flex; align-items: center; gap: 20px; list-style: none; margin: 0; padding: 0; }
+  .nav-links a:not(.btn) { color: var(--muted); text-decoration: none; font-size: 0.88rem; }
+  .nav-links a:not(.btn):hover { color: var(--text); }
+  .hamburger {
+    display: none;
+    flex-direction: column; justify-content: center; gap: 4px;
+    width: 40px; height: 40px;
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer;
+  }
+  .hamburger span { display: block; height: 2px; width: 18px; margin: 0 auto; background: var(--text); }
+
+  @media (max-width: 680px) {
+    .hamburger { display: flex; }
+    .nav-links {
+      position: fixed; top: 58px; left: 0; right: 0;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column; align-items: flex-start; gap: 14px;
+      padding: 18px 20px;
+      transform: translateY(-8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.15s ease, opacity 0.15s ease, visibility 0.15s;
+    }
+    .nav-links.open { transform: translateY(0); opacity: 1; visibility: visible; }
+    @media (prefers-reduced-motion: reduce) {
+      .nav-links { transition: none; }
+    }
+  }
+
+  /* hero pipeline */
+  .pipeline {
+    margin: 32px 0 14px;
+    padding: 22px 16px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .pipe-track {
+    position: relative;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 10px 18px;
+  }
+  .pipe-dot {
+    position: absolute; top: -4px; left: 0;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 10px var(--teal);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pipe-dot { animation: pipe-move 3.6s ease-in-out infinite; }
+  }
+  @keyframes pipe-move {
+    0% { left: 0%; }
+    25% { left: 32%; }
+    55% { left: 66%; }
+    100% { left: calc(100% - 10px); }
+  }
+  .pipe-steps {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .pipe-steps li {
+    font-size: 0.8rem;
+    color: var(--text);
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .pipe-steps li::before {
+    content: "";
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--teal);
+    background: var(--teal);
+    box-shadow: 0 0 12px var(--teal);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pipe-steps li::before { animation: node-lit 3.6s ease-in-out infinite; }
+    .pipe-steps li:nth-child(2)::before { animation-delay: 0.9s; }
+    .pipe-steps li:nth-child(3)::before { animation-delay: 1.8s; }
+    .pipe-steps li:nth-child(4)::before { animation-delay: 2.7s; }
+  }
+  @keyframes node-lit {
+    0%, 100% { background: transparent; box-shadow: none; }
+    10%, 60% { background: var(--teal); box-shadow: 0 0 12px var(--teal); }
+  }
+  @media (max-width: 560px) {
+    .pipe-steps { grid-template-columns: repeat(2, 1fr); gap: 14px 8px; }
+  }
+  .proof-line {
+    font-size: 0.85rem; color: var(--muted); margin-top: 18px; line-height: 1.6;
+  }
+  .proof-line a { color: var(--teal); text-decoration: none; }
+  .proof-line a:hover { text-decoration: underline; }
 
   .problem-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
   .problem-lines li { color: var(--muted); line-height: 1.6; padding-left: 20px; border-left: 2px solid var(--teal-dim); }
   .problem-lines strong { color: var(--text); }
+  .problem-note {
+    margin-top: 18px; padding: 12px 16px; border-radius: 10px;
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--muted); font-size: 0.86rem; line-height: 1.5;
+  }
 
   .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; counter-reset: step; }
   .steps li {
@@ -74,7 +209,7 @@
     padding: 14px 16px 14px 52px;
     position: relative;
     color: var(--muted);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     line-height: 1.5;
   }
   .steps li::before {
@@ -90,21 +225,11 @@
     display: flex; align-items: center; justify-content: center;
   }
   .steps b { color: var(--text); }
-  .steps .arrow { text-align: center; color: var(--border); font-size: 0.9rem; }
 
   main#cards { display: flex; flex-direction: column; gap: 12px; }
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-  }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
   .card-top { display: flex; align-items: center; gap: 10px; }
-  .dot {
-    width: 14px; height: 14px; border-radius: 50%;
-    flex-shrink: 0;
-    box-shadow: 0 0 10px currentColor;
-  }
+  .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 10px currentColor; }
   .dot.ok { background: var(--ok); color: var(--ok); }
   .dot.degraded { background: var(--degraded); color: var(--degraded); }
   .dot.down { background: var(--down); color: var(--down); }
@@ -128,56 +253,110 @@
   .strip .s.down { background: var(--down); }
   .strip .s.empty { background: var(--border); }
   .error { color: var(--down); font-size: 0.8rem; margin-top: 8px; }
-  .card.retired { opacity: 0.5; }
+  .card.retired { opacity: 0.55; }
   .card.retired .dot { background: var(--border); color: var(--border); box-shadow: none; }
-  .retired-note { color: var(--muted, #888); font-size: 0.8rem; margin-top: 8px; }
+  .retired-note { color: var(--muted); font-size: 0.8rem; margin-top: 8px; }
   .loading, .empty-state { color: var(--muted); text-align: center; padding: 40px 0; }
 
-  .facilitators { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-  .facilitators li {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    margin-bottom: 24px;
   }
+  @media (max-width: 560px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 12px; text-align: center;
+  }
+  .stat .num { font-size: 1.4rem; font-weight: 700; color: var(--teal); }
+  .stat .label { font-size: 0.74rem; color: var(--muted); margin-top: 4px; }
+
+  .evidence-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .evidence-list li {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 16px; font-size: 0.84rem;
+  }
+  .evidence-list .ev-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: var(--muted); }
+  .evidence-list .ev-links { margin-top: 6px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .evidence-list a { color: var(--teal); text-decoration: none; }
+  .evidence-list a:hover { text-decoration: underline; }
+
+  .facilitators { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .facilitators li { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
   .facilitators .fname { font-weight: 600; font-size: 0.95rem; }
   .facilitators .fnote { color: var(--muted); font-size: 0.85rem; margin-top: 4px; line-height: 1.5; }
 
-  .limits { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .limits { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
   .limits li { color: var(--muted); font-size: 0.88rem; line-height: 1.6; padding-left: 16px; border-left: 2px solid var(--border); }
   .limits strong { color: var(--text); }
 
-  .links-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  footer {
-    color: var(--muted);
-    font-size: 0.78rem; line-height: 1.6;
+  .faq-list { display: flex; flex-direction: column; gap: 8px; }
+  .faq-list details {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px;
   }
-  footer a, .wrap a { color: var(--teal); }
-  a { word-break: break-word; }
+  .faq-list summary {
+    cursor: pointer; font-weight: 600; font-size: 0.92rem; padding: 12px 0; color: var(--text);
+  }
+  .faq-list p { color: var(--muted); font-size: 0.88rem; margin: 0 0 14px; }
+
+  .links-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  footer { color: var(--muted); font-size: 0.8rem; line-height: 1.7; }
+  footer a { color: var(--teal); }
+  .foot-lines { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 </style>
 </head>
 <body>
 
-<section class="hero">
-  <div class="wrap">
+<nav class="navbar">
+  <div class="wrap navbar-inner">
+    <a href="#top" class="brand">Nirium <span class="accent">Watch</span></a>
+    <button class="hamburger" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#status">Live status</a></li>
+      <li><a href="#evidence">Evidence</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a class="btn ghost small" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="overview" class="hero">
+  <div class="wrap" id="top">
     <span class="badge">Built at HackMeridian 2026 (remote)</span>
-    <h1>Uptime and settlement checks for x402 APIs on Stellar</h1>
-    <p class="sub">Nirium Watch pays each endpoint the way an agent would, on testnet, then confirms on chain that the money actually moved — not just that a 402 came back.</p>
+    <h1>A <span class="accent">402</span> is a promise.<br>A settled transaction is <span class="accent">proof</span>.</h1>
+    <p class="sub">Nirium Watch pays x402 endpoints on Stellar testnet the way an agent would, then checks on-chain that the payment actually settled. Every result is a signed, independently verifiable receipt.</p>
     <div class="cta-row">
       <a class="btn primary" href="#status">See live status</a>
-      <a class="btn ghost" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">View source</a>
+      <a class="btn ghost" href="#evidence">See the evidence</a>
     </div>
+
+    <div class="pipeline" aria-hidden="true">
+      <div class="pipe-track"><div class="pipe-dot"></div></div>
+      <ol class="pipe-steps">
+        <li>402 challenge</li>
+        <li>Paid</li>
+        <li>Settled on-chain</li>
+        <li>Receipt</li>
+      </ol>
+    </div>
+    <p class="proof-line" id="proof-line">Loading the latest real settlement from history.json...</p>
   </div>
 </section>
 
 <section id="problem">
   <div class="wrap">
     <h2>The problem</h2>
-    <ul class="problem-lines">
-      <li><strong>Answering <code class="mono">402 Payment Required</code> proves nothing about whether you can actually get paid.</strong> A facilitator can stay broken for weeks while every endpoint behind it keeps returning a perfect 402.</li>
-      <li>On Stellar this already happened: the OpenZeppelin facilitator's <strong>issue #47</strong> — a ~32-day outage diagnosed by hand by four separate integrators.</li>
-      <li>We were burned ourselves: a payment method we listed as <strong>"live" had zero settled payments</strong>, and nothing caught it.</li>
-    </ul>
+    <p class="sub" style="margin-bottom: 0;">
+      An endpoint can answer 402 and still fail to collect. Nobody notices until an integrator debugs it by hand.
+    </p>
+    <div class="problem-note">
+      This already happened on Stellar: the OpenZeppelin facilitator's issue #47 was a roughly 32-day outage, found by four separate integrators debugging it independently. We were burned too - a payment method we listed as "live" had zero settled payments, and nothing caught it.
+    </div>
   </div>
 </section>
 
@@ -185,10 +364,9 @@
   <div class="wrap">
     <h2>How it works</h2>
     <ul class="steps">
-      <li><b>Probe</b> — GET the endpoint with no payment. Expect <span class="mono">402</span> and parse the requirement: scheme, network, asset, amount, <span class="mono">payTo</span>.</li>
-      <li><b>Pay</b> — fetch again with Nirium's x402 client and our own testnet buyer key. Expect <span class="mono">200</span> and a <span class="mono">payment-response</span> header with a transaction hash.</li>
-      <li><b>Verify on-chain</b> — call Stellar RPC <span class="mono">getTransaction(hash)</span>. Did it succeed, and did a SAC transfer event actually move the asset to <span class="mono">payTo</span> for the required amount?</li>
-      <li><b>Signed receipt</b> — hash the result, sign it with our monitor key, anchor it to the Nirium Audit Trail as an IPFS CID.</li>
+      <li><b>Pay like an agent</b> - probe the endpoint with no payment, expect <span class="mono">402</span>, then pay with our own testnet key through Nirium's x402 client.</li>
+      <li><b>Verify on-chain</b> - call Stellar RPC <span class="mono">getTransaction(hash)</span> and confirm a real transfer moved the required asset to the required address, for the required amount.</li>
+      <li><b>Anchor a signed receipt</b> - hash the result, sign it with our monitor key, and anchor it to the Nirium Audit Trail as an IPFS CID.</li>
     </ul>
   </div>
 </section>
@@ -197,8 +375,23 @@
   <div class="wrap">
     <h2>Live status</h2>
     <main id="cards">
-      <div class="loading">Loading…</div>
+      <div class="loading">Loading...</div>
     </main>
+  </div>
+</section>
+
+<section id="evidence">
+  <div class="wrap">
+    <h2>Evidence</h2>
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat"><div class="num">-</div><div class="label">Checks recorded</div></div>
+      <div class="stat"><div class="num">-</div><div class="label">Settled payments</div></div>
+      <div class="stat"><div class="num">-</div><div class="label">Endpoints watched</div></div>
+      <div class="stat"><div class="num">-</div><div class="label">Last check</div></div>
+    </div>
+    <ul class="evidence-list" id="evidence-list">
+      <li class="loading">Loading...</li>
+    </ul>
   </div>
 </section>
 
@@ -208,49 +401,74 @@
     <ul class="facilitators">
       <li>
         <div class="fname">OpenZeppelin</div>
-        <div class="fnote">Checked via our own Nirium testnet agent (prior work, disclosed).</div>
+        <div class="fnote">Checked through our own testnet agent. We call their public testnet facilitator; no partnership.</div>
       </li>
       <li>
         <div class="fname">Rail402</div>
         <div class="fnote">Fees sponsored on testnet. Endpoints come from a static list plus Rail402's public Bazaar discovery feed.</div>
       </li>
       <li>
-        <div class="fname">AgentSmith (57Blocks)</div>
-        <div class="fnote">Our own seller, running against AgentSmith's public testnet facilitator — not an AgentSmith product, no partnership implied.</div>
+        <div class="fname">AgentSmith</div>
+        <div class="fnote">Our own seller, built to charge through AgentSmith's public testnet facilitator. Not an AgentSmith product, no partnership implied.</div>
       </li>
     </ul>
   </div>
 </section>
 
-<section id="about">
+<section id="claims">
   <div class="wrap">
-    <h2>Prior art</h2>
-    <p class="sub" style="margin-bottom: 28px;">
-      Nearest prior art we found: <a href="https://github.com/carstenjacobsen/x402-testing-tool" target="_blank" rel="noopener">carstenjacobsen/x402-testing-tool</a> (Stellar Hacks: Agents), which mocks endpoints and clients for development. Nirium Watch checks live endpoints continuously and verifies settlement on chain — a neighbour, not a duplicate.
-    </p>
-    <h2>Honest limits</h2>
+    <h2>What we do not claim</h2>
     <ul class="limits">
-      <li><strong>All payments are ours.</strong> The buyer key is our own team key. This is not adoption, not external traffic.</li>
-      <li><strong>No partnerships.</strong> None with OpenZeppelin, Rail402 or AgentSmith; we only call their public testnet endpoints. Nirium is our own prior work (SDK + Audit Trail), disclosed.</li>
-      <li><strong>A failed check is not proof a facilitator is "down."</strong> One failure just means one failed check at one timestamp; this page shows history, not verdicts.</li>
-      <li><strong>Testnet only.</strong> No mainnet secret exists anywhere in this project.</li>
-      <li><strong>Rail402 Bazaar discovery is called literally.</strong> A couple of discovered resources are templated or need query params we don't always supply; those show up honestly as <span class="mono">down</span> rather than being special-cased.</li>
+      <li><strong>No partnerships.</strong> None with OpenZeppelin, Rail402 or AgentSmith. We only call their public testnet endpoints.</li>
+      <li><strong>Nirium is our own prior work.</strong> Built before this event, disclosed, and used here as a dependency, not written during HackMeridian.</li>
+      <li><strong>Testnet only.</strong> Every payment uses our own testnet key. No mainnet secret exists anywhere in this project.</li>
+      <li><strong>One failed check is not proof a facilitator is "down."</strong> This page shows history, not verdicts.</li>
     </ul>
   </div>
 </section>
 
-<section id="links">
+<section id="faq">
   <div class="wrap">
-    <h2>Links</h2>
-    <div class="links-row">
-      <a class="btn ghost" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">Source — github.com/Eras256/nirium-watch</a>
-      <a class="btn ghost" href="https://nirium.xyz" target="_blank" rel="noopener">Nirium SDK &amp; Audit Trail</a>
+    <h2>FAQ</h2>
+    <div class="faq-list">
+      <details>
+        <summary>What does "settled" mean here?</summary>
+        <p>The endpoint answered 402, we paid with our own testnet key, and we found a matching transfer to the required address, for the required amount, on Stellar's RPC. Not just a 200 response.</p>
+      </details>
+      <details>
+        <summary>Why these three facilitators?</summary>
+        <p>They are the public x402 facilitators on Stellar testnet we could reach. Rail402 and AgentSmith were funded in SCF round 45; OpenZeppelin runs the facilitator our own Nirium agent already uses. Rail402 has its own hosted demo seller. For OpenZeppelin we check through our Nirium testnet agent, and for AgentSmith we built our own small seller.</p>
+      </details>
+      <details>
+        <summary>Is any of this real money?</summary>
+        <p>No. Every payment is testnet USDC paid from our own buyer key. Nothing here moves real funds.</p>
+      </details>
+      <details>
+        <summary>What is Nirium?</summary>
+        <p>Nirium is our own prior work: an x402 toolkit for Stellar and an audit trail service, both built before this event. We use them here; we did not build them during HackMeridian.</p>
+      </details>
+      <details>
+        <summary>Why would a check fail?</summary>
+        <p>A dead endpoint, a facilitator outage, or a discovered route that needs parameters we do not send. Failures stay on the page as real history, not hidden.</p>
+      </details>
     </div>
-    <footer style="margin-top: 32px;">
-      Receipts are tagged <code class="mono">nirium-watch</code> and excluded from aggregate Nirium reporting.
-    </footer>
   </div>
 </section>
+
+<footer>
+  <div class="wrap">
+    <div class="links-row">
+      <a class="btn ghost" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn ghost" href="https://nirium.xyz" target="_blank" rel="noopener">Nirium (our prior work)</a>
+    </div>
+    <ul class="foot-lines">
+      <li>Built at HackMeridian 2026 (remote).</li>
+      <li>Nirium is our own prior work, disclosed.</li>
+      <li>Stellar testnet only.</li>
+      <li id="foot-year"></li>
+    </ul>
+  </div>
+</footer>
 
 <script>
   const HISTORY_URL = 'https://raw.githubusercontent.com/Eras256/nirium-watch/main/data/history.json';
@@ -262,12 +480,24 @@
   }
 
   function shortHash(h) {
-    return h ? h.slice(0, 8) + '…' + h.slice(-6) : null;
+    return h ? h.slice(0, 8) + '...' + h.slice(-6) : null;
   }
 
   function fmtTime(ts) {
     const d = new Date(ts);
     return d.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
+  }
+
+  function txLinkHtml(tx) {
+    return tx
+      ? `<a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(tx)}" target="_blank" rel="noopener" class="mono">${escapeHtml(shortHash(tx))}</a>`
+      : '-';
+  }
+
+  function cidLinkHtml(cid) {
+    return cid
+      ? `<a href="https://gateway.pinata.cloud/ipfs/${encodeURIComponent(cid)}" target="_blank" rel="noopener" class="mono">${escapeHtml(shortHash(cid))}</a>`
+      : '-';
   }
 
   function render(records) {
@@ -308,12 +538,6 @@
       const card = document.createElement('div');
       card.className = retired ? 'card retired' : 'card';
 
-      const txLink = latest.tx
-        ? `<a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(latest.tx)}" target="_blank" rel="noopener" class="mono">${escapeHtml(shortHash(latest.tx))}</a>`
-        : '—';
-      const cidLink = latest.cid
-        ? `<a href="https://gateway.pinata.cloud/ipfs/${encodeURIComponent(latest.cid)}" target="_blank" rel="noopener" class="mono">${escapeHtml(shortHash(latest.cid))}</a>`
-        : '—';
       const state = ['ok', 'degraded', 'down'].includes(latest.state) ? latest.state : 'down';
 
       card.innerHTML = `
@@ -327,18 +551,77 @@
         <dl class="meta">
           <div><dt>Last checked</dt><dd>${escapeHtml(fmtTime(latest.ts))}</dd></div>
           <div><dt>Latency</dt><dd>${escapeHtml(latest.latencyMs)} ms</dd></div>
-          <div><dt>Last settled tx</dt><dd>${txLink}</dd></div>
-          <div><dt>Receipt</dt><dd>${cidLink}</dd></div>
+          <div><dt>Last settled tx</dt><dd>${txLinkHtml(latest.tx)}</dd></div>
+          <div><dt>Receipt</dt><dd>${cidLinkHtml(latest.cid)}</dd></div>
         </dl>
         ${retired
           ? '<div class="retired-note">Retired endpoint, no longer checked. Replaced by a newer endpoint for this facilitator; history kept.</div>'
           : latest.error ? `<div class="error">${escapeHtml(latest.error)}</div>` : ''}
         <div class="strip">
-          ${padded.map((r) => `<div class="s ${r && ['ok', 'degraded', 'down'].includes(r.state) ? r.state : 'empty'}" title="${r ? escapeHtml(fmtTime(r.ts) + ' — ' + r.state) : ''}"></div>`).join('')}
+          ${padded.map((r) => `<div class="s ${r && ['ok', 'degraded', 'down'].includes(r.state) ? r.state : 'empty'}" title="${r ? escapeHtml(fmtTime(r.ts) + ' - ' + r.state) : ''}"></div>`).join('')}
         </div>
       `;
       cardsEl.appendChild(card);
     }
+  }
+
+  function renderHero(records) {
+    const proofEl = document.getElementById('proof-line');
+    const withTx = records.filter((r) => r.tx).sort((a, b) => new Date(b.ts) - new Date(a.ts));
+    if (!withTx.length) {
+      proofEl.textContent = 'No settled payment recorded yet.';
+      return;
+    }
+    const latest = withTx[0];
+    proofEl.innerHTML =
+      `Latest real settlement: ${txLinkHtml(latest.tx)} via ${escapeHtml(latest.facilitator)}, receipt ${cidLinkHtml(latest.cid)}.`;
+  }
+
+  function renderStats(records) {
+    const grid = document.getElementById('stats-grid');
+    const total = records.length;
+    const settled = records.filter((r) => r.tx).length;
+    const endpoints = new Set(records.map((r) => r.endpoint)).size;
+    const lastTs = records.reduce((max, r) => (!max || r.ts > max ? r.ts : max), null);
+
+    const cells = [
+      [total, 'Checks recorded'],
+      [settled, 'Settled payments'],
+      [endpoints, 'Endpoints watched'],
+      [lastTs ? fmtTime(lastTs) : '-', 'Last check'],
+    ];
+    grid.innerHTML = cells
+      .map(([num, label]) => `<div class="stat"><div class="num">${escapeHtml(num)}</div><div class="label">${escapeHtml(label)}</div></div>`)
+      .join('');
+  }
+
+  function renderEvidence(records) {
+    const list = document.getElementById('evidence-list');
+    const withTx = records
+      .filter((r) => r.tx)
+      .sort((a, b) => new Date(b.ts) - new Date(a.ts))
+      .slice(0, 6);
+
+    if (!withTx.length) {
+      list.innerHTML = '<li class="empty-state">No settled payments recorded yet.</li>';
+      return;
+    }
+
+    list.innerHTML = withTx
+      .map(
+        (r) => `
+      <li>
+        <div class="ev-top">
+          <span>${escapeHtml(r.endpoint.replace(/^https?:\/\//, ''))}</span>
+          <span>${escapeHtml(r.facilitator)} - ${escapeHtml(fmtTime(r.ts))}</span>
+        </div>
+        <div class="ev-links">
+          <span>tx ${txLinkHtml(r.tx)}</span>
+          <span>receipt ${cidLinkHtml(r.cid)}</span>
+        </div>
+      </li>`,
+      )
+      .join('');
   }
 
   async function load() {
@@ -347,14 +630,34 @@
       if (!res.ok) throw new Error('history fetch failed: ' + res.status);
       const records = await res.json();
       render(records);
+      renderHero(records);
+      renderStats(records);
+      renderEvidence(records);
     } catch (err) {
-      document.getElementById('cards').innerHTML =
-        '<div class="empty-state">Could not load history.json — ' + (err && err.message) + '</div>';
+      const msg = 'Could not load history.json - ' + (err && err.message);
+      document.getElementById('cards').innerHTML = '<div class="empty-state">' + escapeHtml(msg) + '</div>';
+      document.getElementById('proof-line').textContent = msg;
+      document.getElementById('evidence-list').innerHTML = '<li class="empty-state">' + escapeHtml(msg) + '</li>';
     }
   }
 
   load();
   setInterval(load, 60_000);
+
+  const menuBtn = document.getElementById('menu-btn');
+  const navLinks = document.getElementById('nav-links');
+  menuBtn.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+  });
+  navLinks.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.getElementById('foot-year').textContent = String(new Date().getFullYear());
 </script>
 </body>
 </html>
