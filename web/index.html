@@ -293,6 +293,9 @@
   }
   .sev.warning { color: var(--degraded); border: 1px solid var(--degraded); }
   .sev.info { color: var(--teal); border: 1px solid var(--teal); }
+  .sev.test { color: var(--muted); border: 1px solid var(--border); }
+  .alerts-sub { font-size: 0.95rem; margin: 26px 0 12px; color: var(--text); }
+  .ev-msg { margin-top: 6px; color: var(--muted); overflow-wrap: anywhere; line-height: 1.5; }
   .alert-note { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin: 16px 0 0; max-width: 760px; }
   .evidence-list a:hover { text-decoration: underline; }
 
@@ -467,10 +470,17 @@
       <div class="alert-rule"><span class="sev warning">warning</span> settled &rarr; failing</div>
       <div class="alert-rule"><span class="sev info">info</span> failing &rarr; settled again</div>
     </div>
+    <h3 class="alerts-sub">Triggered by Nirium Watch</h3>
     <ul class="evidence-list" id="alerts-list">
       <li class="loading">Loading...</li>
     </ul>
-    <p class="alert-note">Computed live from history.json: every state change since the worker went live on Fly (2026-10-26 06:45 UTC). This page shows when an alert was triggered; delivery is logged on Pullcord's side. Each alert is signed with HMAC-SHA256 over <span class="mono">timestamp.body</span> in the <span class="mono">Pullcord-Signature</span> header.</p>
+    <p class="alert-note">Computed live from history.json: every state change since the worker went live on Fly (2026-10-26 06:45 UTC). Each alert is signed with HMAC-SHA256 over <span class="mono">timestamp.body</span> in the <span class="mono">Pullcord-Signature</span> header.</p>
+
+    <h3 class="alerts-sub">Received by Pullcord</h3>
+    <ul class="evidence-list" id="pullcord-list">
+      <li class="loading">Loading...</li>
+    </ul>
+    <p class="alert-note">Read live from Pullcord's public alert log (<span class="mono">GET /v1/alerts/external?source=nirium-watch</span>): what Pullcord verified and stored. Test alerts are labeled as tests.</p>
   </div>
 </section>
 
@@ -777,7 +787,40 @@
       .join('');
   }
 
+  // Pullcord has no CORS for this route, so it is proxied same-origin by a
+  // Vercel rewrite (/pullcord-alerts, see vercel.json).
+  async function loadPullcordAlerts() {
+    const list = document.getElementById('pullcord-list');
+    try {
+      const res = await fetch('/pullcord-alerts?t=' + Date.now());
+      if (!res.ok) throw new Error('status ' + res.status);
+      const alerts = ((await res.json()).alerts || []).filter((a) => a.source === 'nirium-watch');
+      if (!alerts.length) {
+        list.innerHTML = '<li class="empty-state">Pullcord has not received any alert from Nirium Watch yet.</li>';
+        return;
+      }
+      list.innerHTML = alerts
+        .slice(0, 6)
+        .map((a) => {
+          const sev = ['info', 'warning', 'critical'].includes(a.severity) ? a.severity : 'info';
+          const isTest = /smoke test|synthetic/i.test(a.message || '');
+          return `
+      <li>
+        <div class="ev-top">
+          <span><span class="sev ${sev === 'info' ? 'info' : 'warning'}">${sev}</span>${isTest ? '<span class="sev test">test</span>' : ''} ${escapeHtml(a.type)}</span>
+          <span>received ${escapeHtml(fmtTime(a.received_at))}</span>
+        </div>
+        <div class="ev-msg">${escapeHtml(a.message)}</div>
+      </li>`;
+        })
+        .join('');
+    } catch (err) {
+      list.innerHTML = '<li class="empty-state">Could not reach Pullcord\'s alert log right now (' + escapeHtml(err && err.message) + ').</li>';
+    }
+  }
+
   async function load() {
+    loadPullcordAlerts();
     try {
       const res = await fetch(HISTORY_URL + '?t=' + Date.now());
       if (!res.ok) throw new Error('history fetch failed: ' + res.status);

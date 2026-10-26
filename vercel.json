@@ -4,5 +4,11 @@
   "installCommand": "echo skip",
   "buildCommand": "echo static",
   "outputDirectory": "web",
-  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- web/ vercel.json"
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- web/ vercel.json",
+  "rewrites": [
+    {
+      "source": "/pullcord-alerts",
+      "destination": "https://pullcord-notify.fly.dev/v1/alerts/external?source=nirium-watch&limit=20"
+    }
+  ]
 }

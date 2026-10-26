@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/pullcord-alerts",
+      "destination": "https://pullcord-notify.fly.dev/v1/alerts/external?source=nirium-watch&limit=20"
+    }
+  ]
+}
