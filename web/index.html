@@ -19,18 +19,80 @@
     --down: #f87171;
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    padding: 16px;
   }
   .mono { font-family: "SF Mono", Consolas, Menlo, monospace; }
-  header { max-width: 820px; margin: 0 auto 24px; }
-  h1 { font-size: 1.5rem; margin: 0 0 4px; color: var(--teal); letter-spacing: -0.01em; }
-  .sub { color: var(--muted); font-size: 0.9rem; line-height: 1.5; margin: 0; }
-  main { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 48px 0; }
+  section + section { border-top: 1px solid var(--border); }
+  h1 { font-size: 1.9rem; margin: 0 0 10px; color: var(--teal); letter-spacing: -0.01em; line-height: 1.2; }
+  h2 { font-size: 1.2rem; margin: 0 0 16px; color: var(--text); }
+  h3 { font-size: 0.95rem; margin: 0 0 4px; color: var(--text); }
+  p { line-height: 1.6; }
+  .sub { color: var(--muted); font-size: 1rem; line-height: 1.6; margin: 0 0 20px; max-width: 620px; }
+  .badge {
+    display: inline-block;
+    border: 1px solid var(--teal-dim);
+    color: var(--teal);
+    background: rgba(45, 212, 191, 0.08);
+    font-size: 0.78rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  .cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .btn {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-height: 40px;
+    line-height: 20px;
+  }
+  .btn.primary { background: var(--teal); color: #042e29; }
+  .btn.ghost { border: 1px solid var(--border); color: var(--text); }
+
+  .hero { padding-top: 40px; }
+
+  .problem-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .problem-lines li { color: var(--muted); line-height: 1.6; padding-left: 20px; border-left: 2px solid var(--teal-dim); }
+  .problem-lines strong { color: var(--text); }
+
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px 14px 52px;
+    position: relative;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 14px; top: 14px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--teal-dim);
+    color: var(--teal);
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .steps b { color: var(--text); }
+  .steps .arrow { text-align: center; color: var(--border); font-size: 0.9rem; }
+
+  main#cards { display: flex; flex-direction: column; gap: 12px; }
   .card {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -60,36 +122,133 @@
   .meta a { color: var(--teal); text-decoration: none; }
   .meta a:hover { text-decoration: underline; }
   .strip { display: flex; gap: 3px; margin-top: 14px; flex-wrap: wrap; }
-  .strip .s {
-    width: 10px; height: 10px; border-radius: 2px;
-  }
+  .strip .s { width: 10px; height: 10px; border-radius: 2px; }
   .strip .s.ok { background: var(--ok); }
   .strip .s.degraded { background: var(--degraded); }
   .strip .s.down { background: var(--down); }
   .strip .s.empty { background: var(--border); }
   .error { color: var(--down); font-size: 0.8rem; margin-top: 8px; }
-  footer {
-    max-width: 820px; margin: 28px auto 0; color: var(--muted);
-    font-size: 0.78rem; line-height: 1.6; border-top: 1px solid var(--border); padding-top: 16px;
-  }
-  footer a { color: var(--teal); }
   .loading, .empty-state { color: var(--muted); text-align: center; padding: 40px 0; }
+
+  .facilitators { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .facilitators li {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .facilitators .fname { font-weight: 600; font-size: 0.95rem; }
+  .facilitators .fnote { color: var(--muted); font-size: 0.85rem; margin-top: 4px; line-height: 1.5; }
+
+  .limits { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .limits li { color: var(--muted); font-size: 0.88rem; line-height: 1.6; padding-left: 16px; border-left: 2px solid var(--border); }
+  .limits strong { color: var(--text); }
+
+  .links-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  footer {
+    color: var(--muted);
+    font-size: 0.78rem; line-height: 1.6;
+  }
+  footer a, .wrap a { color: var(--teal); }
+  a { word-break: break-word; }
 </style>
 </head>
 <body>
-<header>
-  <h1>Nirium Watch</h1>
-  <p class="sub">Uptime and settlement checks for x402 APIs on Stellar <strong>testnet</strong>. Each endpoint is paid the way an agent would, then verified on chain — not just a 402.</p>
-</header>
-<main id="cards">
-  <div class="loading">Loading…</div>
-</main>
-<footer>
-  Testnet only. All payments are made with our own buyer key — not external users or traffic.
-  Receipts are tagged <code class="mono">nirium-watch</code> and excluded from aggregate Nirium reporting.
-  Prior work (not written during this event): <a href="https://nirium.xyz" target="_blank" rel="noopener">Nirium SDK &amp; Audit Trail</a>.
-  Source: <a href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">github.com/Eras256/nirium-watch</a>.
-</footer>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="badge">Built at HackMeridian 2026 (remote)</span>
+    <h1>Uptime and settlement checks for x402 APIs on Stellar</h1>
+    <p class="sub">Nirium Watch pays each endpoint the way an agent would, on testnet, then confirms on chain that the money actually moved — not just that a 402 came back.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#status">See live status</a>
+      <a class="btn ghost" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">View source</a>
+    </div>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap">
+    <h2>The problem</h2>
+    <ul class="problem-lines">
+      <li><strong>Answering <code class="mono">402 Payment Required</code> proves nothing about whether you can actually get paid.</strong> A facilitator can stay broken for weeks while every endpoint behind it keeps returning a perfect 402.</li>
+      <li>On Stellar this already happened: the OpenZeppelin facilitator's <strong>issue #47</strong> — a ~32-day outage diagnosed by hand by four separate integrators.</li>
+      <li>We were burned ourselves: a payment method we listed as <strong>"live" had zero settled payments</strong>, and nothing caught it.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <ul class="steps">
+      <li><b>Probe</b> — GET the endpoint with no payment. Expect <span class="mono">402</span> and parse the requirement: scheme, network, asset, amount, <span class="mono">payTo</span>.</li>
+      <li><b>Pay</b> — fetch again with Nirium's x402 client and our own testnet buyer key. Expect <span class="mono">200</span> and a <span class="mono">payment-response</span> header with a transaction hash.</li>
+      <li><b>Verify on-chain</b> — call Stellar RPC <span class="mono">getTransaction(hash)</span>. Did it succeed, and did a SAC transfer event actually move the asset to <span class="mono">payTo</span> for the required amount?</li>
+      <li><b>Signed receipt</b> — hash the result, sign it with our monitor key, anchor it to the Nirium Audit Trail as an IPFS CID.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <h2>Live status</h2>
+    <main id="cards">
+      <div class="loading">Loading…</div>
+    </main>
+  </div>
+</section>
+
+<section id="facilitators">
+  <div class="wrap">
+    <h2>Facilitators checked</h2>
+    <ul class="facilitators">
+      <li>
+        <div class="fname">OpenZeppelin</div>
+        <div class="fnote">Checked via Nirium's own testnet agent — a public endpoint we built on top of, not a partnership.</div>
+      </li>
+      <li>
+        <div class="fname">Rail402</div>
+        <div class="fnote">Fees sponsored on testnet. Endpoints come from a static list plus Rail402's public Bazaar discovery feed.</div>
+      </li>
+      <li>
+        <div class="fname">AgentSmith (57Blocks)</div>
+        <div class="fnote">Our own seller, running against AgentSmith's public testnet facilitator — not an AgentSmith product, no partnership implied.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <h2>Prior art</h2>
+    <p class="sub" style="margin-bottom: 28px;">
+      Nearest prior art we found: <a href="https://github.com/carstenjacobsen/x402-testing-tool" target="_blank" rel="noopener">carstenjacobsen/x402-testing-tool</a> (Stellar Hacks: Agents), which mocks endpoints and clients for development. Nirium Watch checks live endpoints continuously and verifies settlement on chain — a neighbour, not a duplicate.
+    </p>
+    <h2>Honest limits</h2>
+    <ul class="limits">
+      <li><strong>All payments are ours.</strong> The buyer key is our own team key. This is not adoption, not external traffic.</li>
+      <li><strong>No partnerships.</strong> We have no relationship with OpenZeppelin, Rail402, AgentSmith, or Nirium beyond calling their public testnet endpoints.</li>
+      <li><strong>A failed check is not proof a facilitator is "down."</strong> One failure just means one failed check at one timestamp; this page shows history, not verdicts.</li>
+      <li><strong>Testnet only.</strong> No mainnet secret exists anywhere in this project.</li>
+      <li><strong>Rail402 Bazaar discovery is called literally.</strong> A couple of discovered resources are templated or need query params we don't always supply; those show up honestly as <span class="mono">down</span> rather than being special-cased.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="links">
+  <div class="wrap">
+    <h2>Links</h2>
+    <div class="links-row">
+      <a class="btn ghost" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">Source — github.com/Eras256/nirium-watch</a>
+      <a class="btn ghost" href="https://nirium.xyz" target="_blank" rel="noopener">Nirium SDK &amp; Audit Trail</a>
+    </div>
+    <footer style="margin-top: 32px;">
+      Receipts are tagged <code class="mono">nirium-watch</code> and excluded from aggregate Nirium reporting.
+    </footer>
+  </div>
+</section>
+
 <script>
   const HISTORY_URL = 'https://raw.githubusercontent.com/Eras256/nirium-watch/main/data/history.json';
 
