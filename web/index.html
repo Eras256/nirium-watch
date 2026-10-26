@@ -233,7 +233,8 @@
   .dot.ok { background: var(--ok); color: var(--ok); }
   .dot.degraded { background: var(--degraded); color: var(--degraded); }
   .dot.down { background: var(--down); color: var(--down); }
-  .name { font-weight: 600; font-size: 1rem; }
+  .card-top > div { min-width: 0; }
+  .name { font-weight: 600; font-size: 1rem; overflow-wrap: anywhere; }
   .facilitator { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
   .meta {
     margin-top: 12px;
@@ -269,7 +270,7 @@
     background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
     padding: 14px 12px; text-align: center;
   }
-  .stat .num { font-size: 1.4rem; font-weight: 700; color: var(--teal); }
+  .stat .num { font-size: clamp(1.05rem, 4.2vw, 1.4rem); font-weight: 700; color: var(--teal); overflow-wrap: anywhere; }
   .stat .label { font-size: 0.74rem; color: var(--muted); margin-top: 4px; }
 
   .evidence-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -300,10 +301,59 @@
   }
   .faq-list p { color: var(--muted); font-size: 0.88rem; margin: 0 0 14px; }
 
-  .links-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  footer { color: var(--muted); font-size: 0.8rem; line-height: 1.7; }
-  footer a { color: var(--teal); }
-  .foot-lines { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  /* footer */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 0.86rem;
+    padding: 48px 0 28px;
+  }
+  .foot-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  .foot-brand p { margin: 10px 0 16px; line-height: 1.5; max-width: 300px; }
+  .foot-col h3 {
+    margin: 0 0 12px; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text); font-weight: 700;
+  }
+  .foot-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .foot-col a { color: var(--muted); text-decoration: none; }
+  .foot-col a:hover { color: var(--teal); }
+  .foot-bottom {
+    margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px;
+    font-size: 0.8rem;
+  }
+  @media (min-width: 600px) {
+    .foot-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 960px) {
+    .foot-grid { grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 40px; }
+  }
+
+  /* tablet and desktop: use the width instead of one long column */
+  section { scroll-margin-top: 58px; }
+  @media (min-width: 768px) {
+    .wrap { padding: 0 32px; }
+    section { padding: 72px 0; }
+    .hero { padding: 88px 0 72px; }
+    h1 { font-size: clamp(2.4rem, 5vw, 3.4rem); }
+    h2 { font-size: 1.6rem; margin-bottom: 24px; }
+    .sub { font-size: 1.1rem; max-width: 640px; }
+    .pipe-steps li { font-size: 0.9rem; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .steps li { padding: 52px 18px 18px; }
+    .steps li::before { left: 18px; top: 18px; }
+    .facilitators { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .limits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 28px; }
+    .evidence-list { display: grid; grid-template-columns: repeat(2, 1fr); }
+    .evidence-list li.loading { grid-column: 1 / -1; }
+    .faq-list { max-width: 820px; }
+  }
+  @media (min-width: 1024px) {
+    .wrap { max-width: 1120px; }
+    main#cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; align-items: start; }
+    main#cards > .loading, main#cards > .empty-state { grid-column: 1 / -1; }
+  }
 </style>
 </head>
 <body>
@@ -455,18 +505,45 @@
   </div>
 </section>
 
-<footer>
+<footer class="site-footer">
   <div class="wrap">
-    <div class="links-row">
-      <a class="btn ghost" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn ghost" href="https://nirium.xyz" target="_blank" rel="noopener">Nirium (our prior work)</a>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand">Nirium <span class="accent">Watch</span></a>
+        <p>A 402 is a promise. A settled transaction is proof.</p>
+        <a class="btn ghost small" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+      <nav class="foot-col" aria-label="Footer">
+        <h3>Project</h3>
+        <ul>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#status">Live status</a></li>
+          <li><a href="#evidence">Evidence</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+      <div class="foot-col">
+        <h3>Links</h3>
+        <ul>
+          <li><a href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">Source code</a></li>
+          <li><a href="https://github.com/Eras256/nirium-watch/blob/main/data/history.json" target="_blank" rel="noopener">Raw history.json</a></li>
+          <li><a href="https://nirium.xyz" target="_blank" rel="noopener">Nirium (our prior work)</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h3>Disclosure</h3>
+        <ul>
+          <li>Stellar testnet only.</li>
+          <li>No partnerships with any facilitator.</li>
+          <li>Nirium is our own prior work, disclosed.</li>
+        </ul>
+      </div>
     </div>
-    <ul class="foot-lines">
-      <li>Built at HackMeridian 2026 (remote).</li>
-      <li>Nirium is our own prior work, disclosed.</li>
-      <li>Stellar testnet only.</li>
-      <li id="foot-year"></li>
-    </ul>
+    <div class="foot-bottom">
+      <span>&copy; <span id="foot-year"></span> Nirium Watch</span>
+      <span>Built at HackMeridian 2026 (remote)</span>
+    </div>
   </div>
 </footer>
 
