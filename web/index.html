@@ -128,6 +128,9 @@
   .strip .s.down { background: var(--down); }
   .strip .s.empty { background: var(--border); }
   .error { color: var(--down); font-size: 0.8rem; margin-top: 8px; }
+  .card.retired { opacity: 0.5; }
+  .card.retired .dot { background: var(--border); color: var(--border); box-shadow: none; }
+  .retired-note { color: var(--muted, #888); font-size: 0.8rem; margin-top: 8px; }
   .loading, .empty-state { color: var(--muted); text-align: center; padding: 40px 0; }
 
   .facilitators { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -280,14 +283,30 @@
       byEndpoint.get(r.endpoint).push(r);
     }
 
+    // An endpoint is retired when a newer endpoint for the same facilitator
+    // has been checked well after it (e.g. a temporary tunnel replaced by a hosted seller).
+    // Its history stays on the page; it just stops looking like a live failure.
+    const newestByFacilitator = new Map();
+    for (const list of byEndpoint.values()) {
+      const l = list[list.length - 1];
+      const t = new Date(l.ts).getTime();
+      if (t > (newestByFacilitator.get(l.facilitator) || 0)) newestByFacilitator.set(l.facilitator, t);
+    }
+    const isRetired = (latest) =>
+      newestByFacilitator.get(latest.facilitator) - new Date(latest.ts).getTime() > 30 * 60 * 1000;
+    const entries = [...byEndpoint].sort(
+      (a, b) => isRetired(a[1][a[1].length - 1]) - isRetired(b[1][b[1].length - 1]),
+    );
+
     cardsEl.innerHTML = '';
-    for (const [endpoint, list] of byEndpoint) {
+    for (const [endpoint, list] of entries) {
       const latest = list[list.length - 1];
+      const retired = isRetired(latest);
       const last24 = list.slice(-24);
       const padded = Array(Math.max(0, 24 - last24.length)).fill(null).concat(last24);
 
       const card = document.createElement('div');
-      card.className = 'card';
+      card.className = retired ? 'card retired' : 'card';
 
       const txLink = latest.tx
         ? `<a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(latest.tx)}" target="_blank" rel="noopener" class="mono">${escapeHtml(shortHash(latest.tx))}</a>`
@@ -311,7 +330,9 @@
           <div><dt>Last settled tx</dt><dd>${txLink}</dd></div>
           <div><dt>Receipt</dt><dd>${cidLink}</dd></div>
         </dl>
-        ${latest.error ? `<div class="error">${escapeHtml(latest.error)}</div>` : ''}
+        ${retired
+          ? '<div class="retired-note">Retired endpoint, no longer checked. Replaced by a newer endpoint for this facilitator; history kept.</div>'
+          : latest.error ? `<div class="error">${escapeHtml(latest.error)}</div>` : ''}
         <div class="strip">
           ${padded.map((r) => `<div class="s ${r && ['ok', 'degraded', 'down'].includes(r.state) ? r.state : 'empty'}" title="${r ? escapeHtml(fmtTime(r.ts) + ' — ' + r.state) : ''}"></div>`).join('')}
         </div>
