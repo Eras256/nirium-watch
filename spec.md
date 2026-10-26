@@ -36,11 +36,11 @@ data/history.json --> static status page (web/) on Vercel
 
 ## Done criteria (minimum to submit)
 
-- [ ] Public repo, history visibly started today
-- [ ] >=2 endpoints on >=2 facilitators checked end to end on testnet, >=1 verified settlement hash
-- [ ] Receipts anchored, CIDs on the page
-- [ ] Public live URL with the status page
-- [ ] README with problem, setup, env, demo, architecture, prior art and prior work
+- [x] Public repo, history visibly started today — github.com/Eras256/nirium-watch
+- [x] >=2 endpoints on >=2 facilitators checked end to end on testnet, >=1 verified settlement hash — 5 verified across OpenZeppelin (via Nirium) and Rail402
+- [x] Receipts anchored, CIDs on the page
+- [x] Public live URL with the status page — nirium-watch.vercel.app
+- [x] README with problem, setup, env, demo, architecture, prior art and prior work
 - [ ] 3-min video in our own voice, and the deck
 - [ ] Submission form filled in, evidence tx hash included
 
