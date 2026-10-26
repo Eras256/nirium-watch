@@ -4,13 +4,15 @@ import { promisify } from 'node:util';
 const exec = promisify(execFile);
 const INTERVAL_MS = 15 * 60 * 1000;
 
-async function run(cmd: string, args: string[]): Promise<void> {
+async function run(cmd: string, args: string[]): Promise<boolean> {
   try {
-    const { stdout, stderr } = await exec(cmd, args, { shell: true });
+    const { stdout, stderr } = await exec(cmd, args);
     if (stdout) console.log(stdout.trim());
     if (stderr) console.error(stderr.trim());
+    return true;
   } catch (err) {
     console.error(`command failed: ${cmd} ${args.join(' ')}`, err instanceof Error ? err.message : err);
+    return false;
   }
 }
 
@@ -19,12 +21,13 @@ async function tick(): Promise<void> {
   await run('npx', ['tsx', 'src/check.ts']);
 
   await run('git', ['add', 'data/history.json']);
-  const { stdout: status } = await exec('git', ['status', '--porcelain', 'data/history.json'], { shell: true });
+  const { stdout: status } = await exec('git', ['status', '--porcelain', 'data/history.json']);
   if (!status.trim()) {
     console.log('no history change, skipping commit');
     return;
   }
-  await run('git', ['commit', '-m', `Update history.json (${new Date().toISOString()})`]);
+  const committed = await run('git', ['commit', '-m', `Update history.json (${new Date().toISOString()})`]);
+  if (!committed) return;
   await run('git', [
     '-c',
     'credential.helper=',

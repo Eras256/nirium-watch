@@ -1,0 +1,8 @@
+app = "nirium-watch"
+primary_region = "dfw"
+
+[build]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
