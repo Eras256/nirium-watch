@@ -294,6 +294,10 @@
   .sev.warning { color: var(--degraded); border: 1px solid var(--degraded); }
   .sev.info { color: var(--teal); border: 1px solid var(--teal); }
   .sev.test { color: var(--muted); border: 1px solid var(--border); }
+  .evidence-list li.test-group { grid-column: 1 / -1; background: none; border: 0; padding: 0; }
+  .test-group summary { cursor: pointer; color: var(--muted); font-size: 0.85rem; padding: 6px 0; }
+  .test-group .evidence-list { margin-top: 10px; }
+  .test-group .evidence-list li { opacity: 0.75; }
   .alerts-sub { font-size: 0.95rem; margin: 26px 0 12px; color: var(--text); }
   .ev-msg { margin-top: 6px; color: var(--muted); overflow-wrap: anywhere; line-height: 1.5; }
   .alert-note { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin: 16px 0 0; max-width: 760px; }
@@ -795,25 +799,36 @@
       const res = await fetch('/pullcord-alerts?t=' + Date.now());
       if (!res.ok) throw new Error('status ' + res.status);
       const alerts = ((await res.json()).alerts || []).filter((a) => a.source === 'nirium-watch');
-      if (!alerts.length) {
-        list.innerHTML = '<li class="empty-state">Pullcord has not received any alert from Nirium Watch yet.</li>';
-        return;
-      }
-      list.innerHTML = alerts
-        .slice(0, 6)
-        .map((a) => {
-          const sev = ['info', 'warning', 'critical'].includes(a.severity) ? a.severity : 'info';
-          const isTest = /smoke test|synthetic/i.test(a.message || '');
-          return `
+      const isTest = (a) => /smoke test|synthetic/i.test(a.message || '');
+      const item = (a) => {
+        const sev = ['info', 'warning', 'critical'].includes(a.severity) ? a.severity : 'info';
+        return `
       <li>
         <div class="ev-top">
-          <span><span class="sev ${sev === 'info' ? 'info' : 'warning'}">${sev}</span>${isTest ? '<span class="sev test">test</span>' : ''} ${escapeHtml(a.type)}</span>
+          <span><span class="sev ${sev === 'info' ? 'info' : 'warning'}">${sev}</span>${isTest(a) ? '<span class="sev test">test</span>' : ''} ${escapeHtml(a.type)}</span>
           <span>received ${escapeHtml(fmtTime(a.received_at))}</span>
         </div>
         <div class="ev-msg">${escapeHtml(a.message)}</div>
       </li>`;
-        })
-        .join('');
+      };
+      const real = alerts.filter((a) => !isTest(a));
+      const tests = alerts.filter(isTest);
+
+      // Test alerts name real endpoints with a synthetic failure, so they stay
+      // collapsed: a skim must not read them as an outage.
+      let html = real.length
+        ? real.slice(0, 6).map(item).join('')
+        : '<li class="empty-state">No real alerts received yet. Every endpoint that was settling is still settling.</li>';
+      if (tests.length) {
+        html += `
+      <li class="test-group">
+        <details>
+          <summary>Show ${tests.length} test alert${tests.length > 1 ? 's' : ''} (synthetic, sent to check the wiring, not real outages)</summary>
+          <ul class="evidence-list">${tests.slice(0, 6).map(item).join('')}</ul>
+        </details>
+      </li>`;
+      }
+      list.innerHTML = html;
     } catch (err) {
       list.innerHTML = '<li class="empty-state">Could not reach Pullcord\'s alert log right now (' + escapeHtml(err && err.message) + ').</li>';
     }
