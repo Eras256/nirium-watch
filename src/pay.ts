@@ -7,7 +7,9 @@ function getAgent(): Agent {
   if (agent) return agent;
   const secretKey = process.env.STELLAR_SECRET;
   if (!secretKey) throw new Error('STELLAR_SECRET not set — run `npm run setup-keys` first.');
-  agent = new Agent({ baseUrl: 'https://nirium-agent.fly.dev' });
+  // apiKey is unused for x402Fetch against a public testnet seller — the type
+  // declares it required, but the published Niriumtober snippet omits it too.
+  agent = new Agent({ apiKey: '', baseUrl: 'https://nirium-agent.fly.dev' });
   agent.initX402({ secretKey, network: 'stellar:testnet' });
   return agent;
 }

@@ -23,7 +23,8 @@ export function decodeTransfers(contractEventsXdr: xdr.ContractEvent[][]): Decod
       const to = topics[2];
       const amount = scValToNative(body.data());
       transfers.push({
-        contract: StrKey.encodeContract(contractIdBuf),
+        // contractId() is typed as a Hash wrapper but decodes to a raw Buffer at runtime.
+        contract: StrKey.encodeContract(contractIdBuf as unknown as Buffer),
         to: typeof to === 'string' ? to : String(to),
         amount: typeof amount === 'bigint' ? amount : BigInt(amount),
       });

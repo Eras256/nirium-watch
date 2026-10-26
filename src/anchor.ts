@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 
 let agent: Agent | undefined;
 function getAgent(): Agent {
-  agent ??= new Agent({ baseUrl: 'https://nirium-agent.fly.dev' });
+  agent ??= new Agent({ apiKey: '', baseUrl: 'https://nirium-agent.fly.dev' });
   return agent;
 }
 
