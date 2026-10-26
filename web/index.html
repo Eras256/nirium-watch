@@ -281,6 +281,19 @@
   .evidence-list .ev-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; color: var(--muted); }
   .evidence-list .ev-links { margin-top: 6px; display: flex; gap: 14px; flex-wrap: wrap; }
   .evidence-list a { color: var(--teal); text-decoration: none; }
+  .evidence-list li.empty-state { grid-column: 1 / -1; color: var(--muted); text-align: left; padding: 14px 16px; }
+  .alert-rules { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+  .alert-rule {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 999px;
+    padding: 6px 14px; font-size: 0.85rem; color: var(--text);
+  }
+  .sev {
+    display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px; margin-right: 6px;
+  }
+  .sev.warning { color: var(--degraded); border: 1px solid var(--degraded); }
+  .sev.info { color: var(--teal); border: 1px solid var(--teal); }
+  .alert-note { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin: 16px 0 0; max-width: 760px; }
   .evidence-list a:hover { text-decoration: underline; }
 
   .facilitators { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -369,6 +382,7 @@
       <li><a href="#how">How it works</a></li>
       <li><a href="#status">Live status</a></li>
       <li><a href="#evidence">Evidence</a></li>
+      <li><a href="#alerts">Alerts</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a class="btn ghost small" href="https://github.com/Eras256/nirium-watch" target="_blank" rel="noopener">GitHub</a></li>
     </ul>
@@ -442,6 +456,21 @@
     <ul class="evidence-list" id="evidence-list">
       <li class="loading">Loading...</li>
     </ul>
+  </div>
+</section>
+
+<section id="alerts">
+  <div class="wrap">
+    <h2>Alerts</h2>
+    <p class="sub">When an endpoint changes state, Nirium Watch sends one signed alert to Pullcord, our own earlier alerting project. No repeats while a failure persists.</p>
+    <div class="alert-rules">
+      <div class="alert-rule"><span class="sev warning">warning</span> settled &rarr; failing</div>
+      <div class="alert-rule"><span class="sev info">info</span> failing &rarr; settled again</div>
+    </div>
+    <ul class="evidence-list" id="alerts-list">
+      <li class="loading">Loading...</li>
+    </ul>
+    <p class="alert-note">Computed live from history.json: every state change since the worker went live on Fly (2026-10-26 06:45 UTC). This page shows when an alert was triggered; delivery is logged on Pullcord's side. Each alert is signed with HMAC-SHA256 over <span class="mono">timestamp.body</span> in the <span class="mono">Pullcord-Signature</span> header.</p>
   </div>
 </section>
 
@@ -524,6 +553,7 @@
           <li><a href="#how">How it works</a></li>
           <li><a href="#status">Live status</a></li>
           <li><a href="#evidence">Evidence</a></li>
+          <li><a href="#alerts">Alerts</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </nav>
@@ -705,6 +735,48 @@
       .join('');
   }
 
+  // Same rule as src/pullcord.ts alertOnStateChange: alert only when an endpoint
+  // crosses between settled ("ok") and not settled, counted from the Fly go-live.
+  const ALERTS_SINCE = Date.parse('2026-10-26T06:45:42Z');
+
+  function renderAlerts(records) {
+    const list = document.getElementById('alerts-list');
+    const prevByEndpoint = new Map();
+    const alerts = [];
+    for (const r of [...records].sort((a, b) => new Date(a.ts) - new Date(b.ts))) {
+      const prev = prevByEndpoint.get(r.endpoint);
+      if (prev && (prev.state === 'ok') !== (r.state === 'ok') && Date.parse(r.ts) >= ALERTS_SINCE) {
+        alerts.push({ r, prev, failing: prev.state === 'ok' });
+      }
+      prevByEndpoint.set(r.endpoint, r);
+    }
+
+    if (!alerts.length) {
+      list.innerHTML = '<li class="empty-state">No alerts triggered yet: no endpoint has changed state since the worker went live. An endpoint that keeps failing does not alert again.</li>';
+      return;
+    }
+
+    list.innerHTML = alerts
+      .reverse()
+      .slice(0, 6)
+      .map(({ r, prev, failing }) => {
+        const state = ['ok', 'degraded', 'down'].includes(r.state) ? r.state : 'down';
+        const prevState = ['ok', 'degraded', 'down'].includes(prev.state) ? prev.state : 'down';
+        return `
+      <li>
+        <div class="ev-top">
+          <span><span class="sev ${failing ? 'warning' : 'info'}">${failing ? 'warning' : 'info'}</span> ${escapeHtml(r.endpoint.replace(/^https?:\/\//, ''))}</span>
+          <span>${escapeHtml(r.facilitator)} - ${escapeHtml(fmtTime(r.ts))}</span>
+        </div>
+        <div class="ev-links">
+          <span>${prevState} &rarr; ${state}</span>
+          <span>receipt ${cidLinkHtml(r.cid)}</span>
+        </div>
+      </li>`;
+      })
+      .join('');
+  }
+
   async function load() {
     try {
       const res = await fetch(HISTORY_URL + '?t=' + Date.now());
@@ -714,11 +786,13 @@
       renderHero(records);
       renderStats(records);
       renderEvidence(records);
+      renderAlerts(records);
     } catch (err) {
       const msg = 'Could not load history.json - ' + (err && err.message);
       document.getElementById('cards').innerHTML = '<div class="empty-state">' + escapeHtml(msg) + '</div>';
       document.getElementById('proof-line').textContent = msg;
       document.getElementById('evidence-list').innerHTML = '<li class="empty-state">' + escapeHtml(msg) + '</li>';
+      document.getElementById('alerts-list').innerHTML = '<li class="empty-state">' + escapeHtml(msg) + '</li>';
     }
   }
 

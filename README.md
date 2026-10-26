@@ -46,6 +46,8 @@ data/history.json --> status page (web/) on Vercel, fetched live from this repo
 
 On a state change per endpoint (settled to failing, failing to recovered), Nirium Watch posts a signed alert to Pullcord's external alert intake (`POST /v1/alerts/external`, HMAC-SHA256 over `<timestamp>.<rawBody>` in the `Pullcord-Signature` header). One alert per endpoint per state change, with no repeats while a failure persists. See `src/pullcord.ts`.
 
+Alerts have been live in the Fly worker since 2026-10-26 06:45 UTC. The status page's **Alerts** section recomputes, from `data/history.json`, every state change since then that triggered an alert; delivery itself is logged on Pullcord's side, not in this repo. An endpoint that was already failing when alerts went live (e.g. a discovered route we can't call) does not trigger one until it changes state.
+
 ## Endpoints checked
 
 | Endpoint | Facilitator | Price |
