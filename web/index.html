@@ -731,7 +731,7 @@
           <div><dt>Last checked</dt><dd>${escapeHtml(fmtTime(latest.ts))}</dd></div>
           <div><dt title="Checks where the payment settled and was verified on chain">Settled</dt><dd>${list.filter((r) => r.state === 'ok').length} of ${list.length} checks</dd></div>
           <div><dt title="Probe + pay + settle + verify on chain, not the endpoint's response time">Check time</dt><dd>${escapeHtml(latest.latencyMs)} ms</dd></div>
-          <div><dt>Last settled tx</dt><dd>${txLinkHtml(latest.tx)}</dd></div>
+          <div><dt>Last settled tx</dt><dd>${txLinkHtml([...list].reverse().find((r) => r.state === 'ok')?.tx)}</dd></div>
           <div><dt>Receipt</dt><dd>${cidLinkHtml(latest.cid)}</dd></div>
         </dl>
         ${retired
@@ -747,7 +747,9 @@
 
   function renderHero(records) {
     const proofEl = document.getElementById('proof-line');
-    const withTx = records.filter((r) => r.tx).sort((a, b) => new Date(b.ts) - new Date(a.ts));
+    // "Settled" means verified on chain (state ok), not merely a tx hash: a tx
+    // the RPC can't see yet stays degraded and must not count.
+    const withTx = records.filter((r) => r.tx && r.state === 'ok').sort((a, b) => new Date(b.ts) - new Date(a.ts));
     if (!withTx.length) {
       proofEl.textContent = 'No settled payment recorded yet.';
       return;
@@ -760,7 +762,7 @@
   function renderStats(records) {
     const grid = document.getElementById('stats-grid');
     const total = records.length;
-    const settled = records.filter((r) => r.tx).length;
+    const settled = records.filter((r) => r.tx && r.state === 'ok').length;
     const endpoints = new Set(records.map((r) => r.endpoint)).size;
     const lastTs = records.reduce((max, r) => (!max || r.ts > max ? r.ts : max), null);
 
@@ -778,7 +780,7 @@
   function renderEvidence(records) {
     const list = document.getElementById('evidence-list');
     const withTx = records
-      .filter((r) => r.tx)
+      .filter((r) => r.tx && r.state === 'ok')
       .sort((a, b) => new Date(b.ts) - new Date(a.ts))
       .slice(0, 6);
 
