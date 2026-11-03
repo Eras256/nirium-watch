@@ -1,57 +1,5 @@
 [
   {
-    "ts": "2026-10-28T06:36:42.894Z",
-    "endpoint": "https://demo.rail402.dev/weather?city=Istanbul",
-    "facilitator": "Rail402 (fees sponsored)",
-    "http402": true,
-    "paid": true,
-    "tx": "1284ba9a6fcf8bfc964c087fade52b603873624cb249a36673ba626475325719",
-    "verified": true,
-    "state": "ok",
-    "latencyMs": 8203,
-    "error": null,
-    "cid": "bafkreihvnr37pvqv7vmytipshsgtjtzppoaz32vysgmjuhq3yvtstpcdpa"
-  },
-  {
-    "ts": "2026-10-28T06:36:51.097Z",
-    "endpoint": "https://nirium-watch-agentsmith-seller.fly.dev/premium/weather?city=Lisbon",
-    "facilitator": "AgentSmith (our seller, their facilitator)",
-    "http402": true,
-    "paid": true,
-    "tx": "11d824ce4a722d1931efb0a14d1af1fafe412afb10bc43abebfb40247b364401",
-    "verified": true,
-    "state": "ok",
-    "latencyMs": 9991,
-    "error": null,
-    "cid": "bafkreihvnr37pvqv7vmytipshsgtjtzppoaz32vysgmjuhq3yvtstpcdpa"
-  },
-  {
-    "ts": "2026-10-28T06:37:01.088Z",
-    "endpoint": "https://demo.rail402.dev/weather",
-    "facilitator": "rail402 (discovered)",
-    "http402": true,
-    "paid": true,
-    "tx": "f9280b9d9c4310b67bd4717d9fe0a9b6297f4490e3df9fb080f5b3a51f948968",
-    "verified": true,
-    "state": "ok",
-    "latencyMs": 4682,
-    "error": null,
-    "cid": "bafkreihvnr37pvqv7vmytipshsgtjtzppoaz32vysgmjuhq3yvtstpcdpa"
-  },
-  {
-    "ts": "2026-10-28T06:37:05.770Z",
-    "endpoint": "https://demo.rail402.dev/users/:id",
-    "facilitator": "rail402 (discovered)",
-    "http402": true,
-    "paid": true,
-    "tx": "5c3bd2102c83db7bd75ccba65a06a70706a3d4321545beb458c763f93288a8fe",
-    "verified": true,
-    "state": "ok",
-    "latencyMs": 5572,
-    "error": null,
-    "cid": "bafkreihvnr37pvqv7vmytipshsgtjtzppoaz32vysgmjuhq3yvtstpcdpa"
-  },
-  {
     "ts": "2026-10-28T06:37:11.344Z",
     "endpoint": "https://demo.rail402.dev/translate",
     "facilitator": "rail402 (discovered)",
@@ -25998,5 +25946,57 @@
     "latencyMs": 216,
     "error": "expected 402, got 404",
     "cid": "bafkreigzqwa5asjrrpckfi6ltxrlrleilxcggsz7zymyf4kriacnx4bk5a"
+  },
+  {
+    "ts": "2026-11-03T08:05:11.931Z",
+    "endpoint": "https://nirium-agent.fly.dev/api/v1/premium/market",
+    "facilitator": "OpenZeppelin (via Nirium testnet agent)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 44460,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -496939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GC4Q5TWWXI7IHN6DYCBEKCOWJWCKY4JE2NLKLU5SE3YL44IUUFPKUOPC, 500000]\n",
+    "cid": "bafkreiddwuhjqzwl3og4zvopxo7hlvdd5ozcktuautihbt3x2224yzjbl4"
+  },
+  {
+    "ts": "2026-11-03T08:05:56.392Z",
+    "endpoint": "https://nirium-agent.fly.dev/api/v1/premium/signals",
+    "facilitator": "OpenZeppelin (via Nirium testnet agent)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 18035,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -196939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GC4Q5TWWXI7IHN6DYCBEKCOWJWCKY4JE2NLKLU5SE3YL44IUUFPKUOPC, 200000]\n",
+    "cid": "bafkreiddwuhjqzwl3og4zvopxo7hlvdd5ozcktuautihbt3x2224yzjbl4"
+  },
+  {
+    "ts": "2026-11-03T08:06:14.427Z",
+    "endpoint": "https://demo.rail402.dev/weather?city=Istanbul",
+    "facilitator": "Rail402 (fees sponsored)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 22995,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -6939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GBSVTVRQ4AEFRNGH2MIOOWZSAVLZKOKNKI4UAGSMBZSNRP4I3FL3ELYP, 10000]\n",
+    "cid": "bafkreiddwuhjqzwl3og4zvopxo7hlvdd5ozcktuautihbt3x2224yzjbl4"
+  },
+  {
+    "ts": "2026-11-03T08:06:37.422Z",
+    "endpoint": "https://nirium-watch-agentsmith-seller.fly.dev/premium/weather?city=Lisbon",
+    "facilitator": "AgentSmith (our seller, their facilitator)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 35300,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -6939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GBGDRJC4XNYSIF27LQE3QE2R6S76KSR73FCG44XZLJ4IXP2P7PJ363FG, 10000]\n",
+    "cid": "bafkreiddwuhjqzwl3og4zvopxo7hlvdd5ozcktuautihbt3x2224yzjbl4"
   }
 ]
