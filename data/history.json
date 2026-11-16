@@ -1,57 +1,5 @@
 [
   {
-    "ts": "2026-11-10T16:44:16.756Z",
-    "endpoint": "https://demo.rail402.dev/weather?city=Istanbul",
-    "facilitator": "Rail402 (fees sponsored)",
-    "http402": true,
-    "paid": false,
-    "tx": null,
-    "verified": false,
-    "state": "degraded",
-    "latencyMs": 600,
-    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -6939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GBSVTVRQ4AEFRNGH2MIOOWZSAVLZKOKNKI4UAGSMBZSNRP4I3FL3ELYP, 10000]\n",
-    "cid": null
-  },
-  {
-    "ts": "2026-11-10T16:44:17.356Z",
-    "endpoint": "https://nirium-watch-agentsmith-seller.fly.dev/premium/weather?city=Lisbon",
-    "facilitator": "AgentSmith (our seller, their facilitator)",
-    "http402": true,
-    "paid": false,
-    "tx": null,
-    "verified": false,
-    "state": "degraded",
-    "latencyMs": 8125,
-    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -6939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GBGDRJC4XNYSIF27LQE3QE2R6S76KSR73FCG44XZLJ4IXP2P7PJ363FG, 10000]\n",
-    "cid": null
-  },
-  {
-    "ts": "2026-11-10T16:44:25.481Z",
-    "endpoint": "https://demo.rail402.dev/weather",
-    "facilitator": "rail402 (discovered)",
-    "http402": true,
-    "paid": false,
-    "tx": null,
-    "verified": false,
-    "state": "degraded",
-    "latencyMs": 7520,
-    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -6939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GBSVTVRQ4AEFRNGH2MIOOWZSAVLZKOKNKI4UAGSMBZSNRP4I3FL3ELYP, 10000]\n",
-    "cid": null
-  },
-  {
-    "ts": "2026-11-10T16:44:33.001Z",
-    "endpoint": "https://demo.rail402.dev/users/:id",
-    "facilitator": "rail402 (discovered)",
-    "http402": true,
-    "paid": false,
-    "tx": null,
-    "verified": false,
-    "state": "degraded",
-    "latencyMs": 17035,
-    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #10)], data:[\"resulting balance is not within the allowed range\", 0, -6939, 9223372036854775807]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, transfer], data:[GBATBWLOFLKYBTL3W4ZP4Y7A4ZFFOIOO5H6VNGGTMDSGPUIAUFKW5LVL, GBSVTVRQ4AEFRNGH2MIOOWZSAVLZKOKNKI4UAGSMBZSNRP4I3FL3ELYP, 10000]\n",
-    "cid": null
-  },
-  {
     "ts": "2026-11-10T16:44:50.037Z",
     "endpoint": "https://demo.rail402.dev/translate",
     "facilitator": "rail402 (discovered)",
@@ -25997,6 +25945,58 @@
     "state": "down",
     "latencyMs": 105,
     "error": "expected 402, got 404",
+    "cid": null
+  },
+  {
+    "ts": "2026-11-16T16:29:07.836Z",
+    "endpoint": "https://nirium-agent.fly.dev/api/v1/premium/market",
+    "facilitator": "OpenZeppelin (via Nirium testnet agent)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 1296,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)",
+    "cid": null
+  },
+  {
+    "ts": "2026-11-16T16:29:09.132Z",
+    "endpoint": "https://nirium-agent.fly.dev/api/v1/premium/signals",
+    "facilitator": "OpenZeppelin (via Nirium testnet agent)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 369,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)",
+    "cid": null
+  },
+  {
+    "ts": "2026-11-16T16:29:09.501Z",
+    "endpoint": "https://demo.rail402.dev/weather?city=Istanbul",
+    "facilitator": "Rail402 (fees sponsored)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 1338,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)",
+    "cid": null
+  },
+  {
+    "ts": "2026-11-16T16:29:10.839Z",
+    "endpoint": "https://nirium-watch-agentsmith-seller.fly.dev/premium/weather?city=Lisbon",
+    "facilitator": "AgentSmith (our seller, their facilitator)",
+    "http402": true,
+    "paid": false,
+    "tx": null,
+    "verified": false,
+    "state": "degraded",
+    "latencyMs": 588,
+    "error": "Failed to create payment payload: Stellar simulation failed with error message: HostError: Error(Contract, #10)",
     "cid": null
   }
 ]
